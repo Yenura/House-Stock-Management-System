@@ -3,6 +3,11 @@ allprojects {
         google()
         mavenCentral()
     }
+
+dependencies {
+    // Add the dependency for the Google services Gradle plugin
+  classpath 'com.google.gms.google-services' version '4.4.2' apply false
+}
 }
 
 val newBuildDir: Directory = rootProject.layout.buildDirectory.dir("../../build").get()
