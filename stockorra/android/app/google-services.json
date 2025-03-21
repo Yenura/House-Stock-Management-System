@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "236120790871",
+    "firebase_url": "https://yenura-project-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "yenura-project",
+    "storage_bucket": "yenura-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:236120790871:android:a1951e0fb8c98fc3915012",
+        "android_client_info": {
+          "package_name": "com.example.stockorra"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCX5jdt0sgQMHsbGQylG6rF3IFn6hry0fc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
