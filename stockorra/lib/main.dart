@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:stockorra/screens/inventory_home_screen.dart'; // Import InventoryHomeScreen
 
-void main() {
+
   runApp(const MyApp());
 }
 
@@ -11,13 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Inventory Management',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home:
-          const InventoryHomeScreen(), // Set InventoryHomeScreen as the main screen
+
     );
   }
 }
