@@ -31,6 +31,7 @@ class AuthProvider with ChangeNotifier {
   // Getters
   AuthStatus get status => _status;
   User? get user => _user;
+  User? get currentUser => _user;
   String? get error => _error;
   bool get loading => _loading;
   bool get isAuthenticated => _status == AuthStatus.authenticated;
@@ -136,6 +137,8 @@ class AuthProvider with ChangeNotifier {
     return false;
   }
 
+  
+
   // Sign in with Google
   Future<bool> signInWithGoogle() async {
     _loading = true;
@@ -201,6 +204,87 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
     return false;
   }
+
+  // Get user details
+Future<Map<String, dynamic>?> getUserDetails(String userId) async {
+  _loading = true;
+  _error = null;
+  notifyListeners();
+
+  try {
+    final userDetails = await _authService.getUserDetails(userId);
+    _loading = false;
+    notifyListeners();
+    return userDetails;
+  } catch (e) {
+    _error = 'Failed to get user details';
+    _loading = false;
+    notifyListeners();
+    return null;
+  }
+}
+Future<List<User>> getHouseholdMembers() async {
+  if (_user == null) return [];
+
+  try {
+    final householdDoc = await _authService.firestore
+        .collection('households')
+        .doc(_user!.id)
+        .get();
+
+    final memberIds = List<String>.from(householdDoc.data()?['members'] ?? []);
+
+    final members = await Future.wait(memberIds.map((id) async {
+      final userData = await _authService.getUserDetails(id);
+      return User.fromMap(userData);
+    }));
+
+    return members;
+  } catch (e) {
+    _error = 'Failed to fetch household members';
+    notifyListeners();
+    return [];
+  }
+}
+
+
+// Update user details
+Future<bool> updateUser(String userId, Map<String, dynamic> updatedData) async {
+  _loading = true;
+  _error = null;
+  notifyListeners();
+
+  try {
+    await _authService.updateUser(userId, updatedData);
+    _loading = false;
+    notifyListeners();
+    return true;
+  } catch (e) {
+    _error = 'Failed to update user';
+    _loading = false;
+    notifyListeners();
+    return false;
+  }
+}
+
+// Delete user
+Future<bool> deleteUser(String userId) async {
+  _loading = true;
+  _error = null;
+  notifyListeners();
+
+  try {
+    await _authService.deleteUser(userId);
+    _loading = false;
+    notifyListeners();
+    return true;
+  } catch (e) {
+    _error = 'Failed to delete user';
+    _loading = false;
+    notifyListeners();
+    return false;
+  }
+}
 
   // Reset password
   Future<bool> resetPassword(String email) async {

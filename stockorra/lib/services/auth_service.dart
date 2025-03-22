@@ -13,6 +13,8 @@ class AuthException implements Exception {
 class AuthService {
   final firebase_auth.FirebaseAuth _firebaseAuth = firebase_auth.FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  FirebaseFirestore get firestore => _firestore;
+
   
   // Stream of user objects based on Firebase auth state
   Stream<User?> get user {
@@ -147,6 +149,46 @@ class AuthService {
       throw AuthException(message: e.toString());
     }
   }
+
+    // Get user details
+  Future<Map<String, dynamic>> getUserDetails(String userId) async {
+    try {
+      final doc = await _firestore.collection('users').doc(userId).get();
+      if (doc.exists) {
+        return doc.data()!;
+      } else {
+        throw AuthException(message: 'User not found');
+      }
+    } catch (e) {
+      throw AuthException(message: 'Failed to get user details: $e');
+    }
+  }
+
+  // Update user
+  Future<void> updateUser(String userId, Map<String, dynamic> data) async {
+    try {
+      await _firestore.collection('users').doc(userId).update(data);
+    } catch (e) {
+      throw AuthException(message: 'Failed to update user: $e');
+    }
+  }
+
+  // Delete user
+  Future<void> deleteUser(String userId) async {
+    try {
+      // Delete user from Firestore
+      await _firestore.collection('users').doc(userId).delete();
+
+      // Optionally delete from FirebaseAuth as well if the currently logged-in user is the same
+      final currentUser = _firebaseAuth.currentUser;
+      if (currentUser != null && currentUser.uid == userId) {
+        await currentUser.delete();
+      }
+    } catch (e) {
+      throw AuthException(message: 'Failed to delete user: $e');
+    }
+  }
+
   
   // Sign in with Google
   Future<User> signInWithGoogle() async {

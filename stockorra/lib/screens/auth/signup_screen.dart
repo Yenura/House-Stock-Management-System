@@ -77,9 +77,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 const SizedBox(height: 24),
                 CustomTextField(
+                  label: 'Full Name',
                   controller: _nameController,
                   hintText: 'Full Name',
-                  prefixIcon: Icons.person_outline,
+                  prefix: Icon(Icons.person_outline),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your name';
@@ -89,9 +90,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 const SizedBox(height: 16),
                 CustomTextField(
+                  label: 'Email',
                   controller: _emailController,
                   hintText: 'Email',
-                  prefixIcon: Icons.email_outlined,
+                  prefix: Icon(Icons.email_outlined),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -106,11 +108,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 const SizedBox(height: 16),
                 CustomTextField(
+                  label: 'Password',
                   controller: _passwordController,
                   hintText: 'Password',
-                  prefixIcon: Icons.lock_outline,
+                  prefix: Icon(Icons.lock_outline),
                   obscureText: !_passwordVisible,
-                  suffixIcon: IconButton(
+                  suffix: IconButton(
                     icon: Icon(
                       _passwordVisible
                           ? Icons.visibility_off
@@ -178,8 +181,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     SocialLoginButton(
-                      icon: 'assets/icons/google.png',
-                      onPressed: () async {
+                      text: 'Google',
+                      iconPath: 'assets/icons/google.png',
+                      onTap: () async {
                         final success = await authProvider.signInWithGoogle();
                         if (success && mounted) {
                           Navigator.of(context).pushReplacementNamed('/home');
@@ -187,8 +191,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                     ),
                     SocialLoginButton(
-                      icon: 'assets/icons/facebook.png',
-                      onPressed: () async {
+                      text: 'Facebook',
+                      iconPath: 'assets/icons/facebook.png',
+                      onTap: () async {
                         final success = await authProvider.signInWithFacebook();
                         if (success && mounted) {
                           Navigator.of(context).pushReplacementNamed('/home');
@@ -196,8 +201,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                     ),
                     SocialLoginButton(
-                      icon: 'assets/icons/apple.png',
-                      onPressed: () async {
+                      text: 'Apple',
+                      iconPath: 'assets/icons/apple.png',
+                      onTap: () async {
                         final success = await authProvider.signInWithApple();
                         if (success && mounted) {
                           Navigator.of(context).pushReplacementNamed('/home');

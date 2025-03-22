@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:stockorra/models/user_model.dart';
 
 class UserTile extends StatelessWidget {
-  final UserModel user;
+  final User user;
   final VoidCallback onEdit;
 
   const UserTile({
@@ -25,7 +25,7 @@ class UserTile extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Text(
-              user.displayName,
+              user.name,
               style: const TextStyle(
                 fontWeight: FontWeight.w500,
               ),

@@ -41,7 +41,7 @@ class ProfileScreen extends StatelessWidget {
               radius: 50,
               backgroundColor: Colors.grey.shade200,
               child: Text(
-                authProvider.currentUser?.displayName.substring(0, 1).toUpperCase() ?? 'U',
+                authProvider.currentUser?.name.substring(0, 1).toUpperCase() ?? 'U',
                 style: const TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
@@ -51,7 +51,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              authProvider.currentUser?.displayName ?? 'User',
+              authProvider.currentUser?.name ?? 'User',
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -92,7 +92,7 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            FutureBuilder<List<UserModel>>(
+            FutureBuilder<List<User>>(
               future: authProvider.getHouseholdMembers(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -120,7 +120,7 @@ class ProfileScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final user = users[index];
                     return ListTile(
-                      title: Text(user.displayName),
+                      title: Text(user.name),
                       subtitle: Text(user.email),
                       trailing: IconButton(
                         icon: const Icon(Icons.edit),
