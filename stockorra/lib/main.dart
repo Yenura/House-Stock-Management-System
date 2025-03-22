@@ -15,9 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'House Stock Management System',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+
       home: const HomeScreen(),
     );
   }
