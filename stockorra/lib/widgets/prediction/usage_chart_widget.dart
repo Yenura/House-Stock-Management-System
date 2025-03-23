@@ -7,9 +7,9 @@ class UsageChartWidget extends StatelessWidget {
   final List<Map<String, dynamic>> usageData;
 
   const UsageChartWidget({
-    Key? key,
+    super.key,
     required this.usageData,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
