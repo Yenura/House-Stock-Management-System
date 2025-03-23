@@ -78,6 +78,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.stockorra"
+
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

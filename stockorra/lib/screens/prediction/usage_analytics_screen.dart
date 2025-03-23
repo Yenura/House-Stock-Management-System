@@ -4,7 +4,7 @@ import '../../../models/item_model.dart';
 import '../../../widgets/prediction/usage_chart_widget.dart';
 
 class UsageAnalyticsScreen extends StatefulWidget {
-  const UsageAnalyticsScreen({Key? key}) : super(key: key);
+  const UsageAnalyticsScreen({super.key});
 
   @override
   _UsageAnalyticsScreenState createState() => _UsageAnalyticsScreenState();
