@@ -1,8 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:stockorra/screens/launch/onboarding_screens.dart'; // Ensure this path is correct
 
-void main() {
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -11,13 +7,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Stockorra',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        primaryColor: const Color(0xFF4D7D4D),
-        scaffoldBackgroundColor: const Color(0xFFF5F8F5),
-        fontFamily: 'Roboto',
+
       ),
       home: const DashboardScreen(), // Ensure this class name matches the one in onboarding_screens.dart
     );
