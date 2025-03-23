@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stockorra/screens/services/inventory_service.dart';
+import 'package:stockorra/services/inventory_service.dart';
 import '../../../models/inventory_item.dart';
 import 'inventory_add_screen.dart';
 

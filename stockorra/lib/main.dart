@@ -1,38 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:stockorra/screens/launch/onboarding_screens.dart'; // Ensure this path is correct
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Initialize Firebase
+void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key}); // Using 'super.key' to pass the key to the superclass constructor
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Stockorra',
       debugShowCheckedModeBanner: false,
-      title: 'House Stock Management System',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
+        primaryColor: const Color(0xFF4D7D4D),
+        scaffoldBackgroundColor: const Color(0xFFF5F8F5),
+        fontFamily: 'Roboto',
       ),
-      home: const HomeScreen(),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Home")),
-      body: const Center(
-        child: Text("Welcome to House Stock Management System!"),
-      ),
+      home: const DashboardScreen(), // Ensure this class name matches the one in onboarding_screens.dart
     );
   }
 }
