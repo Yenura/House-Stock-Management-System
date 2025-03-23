@@ -6,7 +6,7 @@ import 'package:stockorra/utils/constants.dart';
 import 'package:stockorra/utils/theme.dart';
 
 class StockorraApp extends StatelessWidget {
-  const StockorraApp({Key? key}) : super(key: key);
+  const StockorraApp({super.key});
 
   @override
   Widget build(BuildContext context) {

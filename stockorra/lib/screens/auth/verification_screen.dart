@@ -1,8 +1,6 @@
 // lib/screens/auth/verification_screen.dart
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
 import '../../widgets/auth/auth_button.dart';
 
 class VerificationScreen extends StatefulWidget {
@@ -38,8 +36,14 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
   void _verifyOtp() {
     final enteredOtp = _otp.join();
-    // For demo purposes, any code works
-    Navigator.of(context).pushReplacementNamed('/home');
+    // For demo purposes, verify if OTP is 4 digits
+    if (enteredOtp.length == 4) {
+      Navigator.of(context).pushReplacementNamed('/home');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid 4-digit code')),
+      );
+    }
   }
 
   @override

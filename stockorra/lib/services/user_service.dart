@@ -106,7 +106,7 @@ class UserService {
       final userData = userDoc.data();
       final roles = userData?['roles'] ?? ['user'];
       
-      if (!(roles as List).contains('admin') && !(roles as List).contains('owner')) {
+      if (!(roles as List).contains('admin') && !(roles).contains('owner')) {
         throw UserException('Permission denied');
       }
       
@@ -220,7 +220,7 @@ class UserService {
       final userData = userDoc.data();
       final currentRoles = userData?['roles'] ?? ['user'];
       
-      if (!(currentRoles as List).contains('admin') && !(currentRoles as List).contains('owner')) {
+      if (!(currentRoles as List).contains('admin') && !(currentRoles).contains('owner')) {
         throw UserException('Permission denied');
       }
       
@@ -243,7 +243,7 @@ class UserService {
       }
       
       // Don't allow changing own role if you're the only admin
-      if (userId == currentUser.uid && (currentRoles as List).contains('admin')) {
+      if (userId == currentUser.uid && (currentRoles).contains('admin')) {
         // Check if there are other admins
         final usersSnapshot = await _firestore
             .collection('users')
@@ -279,7 +279,7 @@ class UserService {
       final userData = userDoc.data();
       final roles = userData?['roles'] ?? ['user'];
       
-      if (!(roles as List).contains('admin') && !(roles as List).contains('owner')) {
+      if (!(roles as List).contains('admin') && !(roles).contains('owner')) {
         throw UserException('Permission denied');
       }
       
@@ -302,7 +302,7 @@ class UserService {
       }
       
       // Don't allow removing yourself if you're the only admin
-      if (userId == currentUser.uid && (roles as List).contains('admin')) {
+      if (userId == currentUser.uid && (roles).contains('admin')) {
         // Check if there are other admins
         final usersSnapshot = await _firestore
             .collection('users')
