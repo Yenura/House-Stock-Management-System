@@ -7,15 +7,5 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cloud_firestore: ^4.15.5
-  provider: ^6.1.1
-  firebase_auth: ^4.17.5
-  firebase_core: ^2.24.2
-  intl: ^0.19.0
-  fl_chart: ^0.66.1
 
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^3.0.1
 
