@@ -33,4 +33,5 @@ dependencies:
   fl_chart: ^0.70.2
   flutter:
     sdk: flutter
+  intl: ^0.20.2
 
