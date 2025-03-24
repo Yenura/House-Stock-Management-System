@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
-import 'screens/dashboard/dashboard_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:stockorra/screens/launch/onboarding_screens.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+ name: "dev project",
+ options: DefaultFirebaseOptions.currentPlatform);
+}
 
 class MyApp extends StatelessWidget {
   const MyApp(
@@ -8,8 +16,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home:
-          const DashboardScreen(), // Ensure this class name matches the one in onboarding_screens.dart
+      title: 'Stockorra',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+        primaryColor: const Color(0xFF4D7D4D),
+        scaffoldBackgroundColor: const Color(0xFFF5F8F5),
+        fontFamily: 'Roboto',
+      ),
+      home: const DashboardScreen(),
     );
   }
 }
