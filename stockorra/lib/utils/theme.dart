@@ -257,21 +257,19 @@ class AppTheme {
       bodyMedium: bodyMedium,
       bodySmall: bodySmall,
     ),
-    colorScheme: ColorScheme.light(
+    colorScheme: const ColorScheme.light(
       primary: primaryColor,
       secondary: secondaryColor,
       tertiary: accentColor,
       error: errorColor,
-      background: backgroundColor,
       surface: cardColor,
       onPrimary: whiteColor,
       onSecondary: whiteColor,
-      onBackground: textPrimaryColor,
       onSurface: textPrimaryColor,
       onError: whiteColor,
       brightness: Brightness.light,
     ),
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: whiteColor,
       selectedItemColor: primaryColor,
       unselectedItemColor: greyColor,

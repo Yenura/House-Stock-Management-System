@@ -177,38 +177,7 @@ class InventoryHomeScreen extends StatelessWidget {
     );
   }
 
-  // Low Stock Alert Items
-  Widget _buildLowStockItem(String itemName, String stockLeft) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 5),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(itemName,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w600)),
-              const SizedBox(height: 5),
-              Text(stockLeft,
-                  style: const TextStyle(fontSize: 14, color: Colors.red)),
-            ],
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // TODO: Implement restock action
-              print("Restock $itemName Clicked");
-            },
-            child: const Text("Restock"),
-          ),
-        ],
+
       ),
     );
   }

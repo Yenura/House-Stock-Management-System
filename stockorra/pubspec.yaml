@@ -7,10 +7,5 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cloud_firestore: ^5.6.5
-  firebase_auth: ^5.5.1
-  intl: ^0.20.2
-  fl_chart: ^0.70.2
-  provider: ^6.1.2
-  font_awesome_flutter: ^10.8.0
+
 

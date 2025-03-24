@@ -8,7 +8,7 @@ import 'package:stockorra/widgets/auth/auth_button.dart';
 import 'package:stockorra/widgets/auth/custom_text_field.dart';
 
 class AddUserScreen extends StatefulWidget {
-  const AddUserScreen({Key? key}) : super(key: key);
+  const AddUserScreen({super.key});
 
   @override
   State<AddUserScreen> createState() => _AddUserScreenState();
