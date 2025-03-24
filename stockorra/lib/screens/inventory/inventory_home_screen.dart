@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:stockorra/screens/services/inventory_service.dart';
 import '../../../models/inventory_item.dart';
 import 'inventory_add_screen.dart';
+import '../../services/inventory_service.dart';
 
 class InventoryHomeScreen extends StatefulWidget {
   const InventoryHomeScreen({super.key});
@@ -44,21 +44,20 @@ class _InventoryHomeScreenState extends State<InventoryHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Inventory')),
-      body:
-          _items.isEmpty
-              ? const Center(
-                child: Text('No items available. Add new inventory.'),
-              )
-              : ListView.builder(
-                itemCount: _items.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(_items[index].name),
-                    subtitle: Text('Category: ${_items[index].category}'),
-                    trailing: Text('Qty: ${_items[index].quantity}'),
-                  );
-                },
-              ),
+      body: _items.isEmpty
+          ? const Center(
+              child: Text('No items available. Add new inventory.'),
+            )
+          : ListView.builder(
+              itemCount: _items.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(_items[index].name),
+                  subtitle: Text('Category: ${_items[index].category}'),
+                  trailing: Text('Qty: ${_items[index].quantity}'),
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: _navigateToAddItemScreen,
         child: const Icon(Icons.add),

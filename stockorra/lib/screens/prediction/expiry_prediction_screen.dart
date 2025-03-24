@@ -5,7 +5,7 @@ import '../../../services/prediction_service.dart';
 import '../../../widgets/prediction/expiry_card_widget.dart';
 
 class ExpiryPredictionScreen extends StatefulWidget {
-  const ExpiryPredictionScreen({Key? key}) : super(key: key);
+  const ExpiryPredictionScreen({super.key});
 
   @override
   _ExpiryPredictionScreenState createState() => _ExpiryPredictionScreenState();

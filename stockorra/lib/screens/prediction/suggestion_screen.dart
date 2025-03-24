@@ -4,7 +4,7 @@ import '../../../services/prediction_service.dart';
 import '../../../widgets/prediction/suggestion_card_widget.dart';
 
 class SuggestionScreen extends StatefulWidget {
-  const SuggestionScreen({Key? key}) : super(key: key);
+  const SuggestionScreen({super.key});
 
   @override
   _SuggestionScreenState createState() => _SuggestionScreenState();

@@ -8,13 +8,13 @@ class SuggestionCardWidget extends StatelessWidget {
   final VoidCallback onAccept;
 
   const SuggestionCardWidget({
-    Key? key,
+    super.key,
     required this.itemName,
     required this.currentQuantity,
     required this.suggestedQuantity,
     required this.reason,
     required this.onAccept,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

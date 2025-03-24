@@ -9,13 +9,13 @@ class ExpiryCardWidget extends StatelessWidget {
   final int daysRemaining;
 
   const ExpiryCardWidget({
-    Key? key,
+    super.key,
     required this.itemName,
     required this.itemCategory,
     required this.quantity,
     required this.expiryDate,
     required this.daysRemaining,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
