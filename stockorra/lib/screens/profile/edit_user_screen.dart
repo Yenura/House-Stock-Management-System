@@ -11,9 +11,9 @@ class EditUserScreen extends StatefulWidget {
   final User user;
   
   const EditUserScreen({
-    Key? key,
+    super.key,
     required this.user,
-  }) : super(key: key);
+  });
 
   @override
   State<EditUserScreen> createState() => _EditUserScreenState();

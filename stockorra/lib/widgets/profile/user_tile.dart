@@ -6,10 +6,10 @@ class UserTile extends StatelessWidget {
   final VoidCallback onEdit;
 
   const UserTile({
-    Key? key,
+    super.key,
     required this.user,
     required this.onEdit,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

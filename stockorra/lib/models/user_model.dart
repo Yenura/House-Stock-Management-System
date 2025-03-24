@@ -68,7 +68,7 @@ class User {
     List<String>? roles,
   }) {
     return User(
-      id: this.id,
+      id: id,
       name: name ?? this.name,
       email: email ?? this.email,
       photoUrl: photoUrl ?? this.photoUrl,

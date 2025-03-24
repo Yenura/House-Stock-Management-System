@@ -257,7 +257,7 @@ class AppTheme {
       bodyMedium: bodyMedium,
       bodySmall: bodySmall,
     ),
-    colorScheme: ColorScheme.light(
+    colorScheme: const ColorScheme.light(
       primary: primaryColor,
       secondary: secondaryColor,
       tertiary: accentColor,
@@ -269,7 +269,7 @@ class AppTheme {
       onError: whiteColor,
       brightness: Brightness.light,
     ),
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: whiteColor,
       selectedItemColor: primaryColor,
       unselectedItemColor: greyColor,

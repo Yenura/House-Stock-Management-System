@@ -7,7 +7,7 @@ import '../../widgets/auth/custom_text_field.dart';
 class ForgotPasswordScreen extends StatefulWidget {
   static const routeName = '/forgot-password';
 
-  const ForgotPasswordScreen({Key? key}) : super(key: key);
+  const ForgotPasswordScreen({super.key});
 
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();

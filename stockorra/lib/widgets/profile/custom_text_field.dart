@@ -9,14 +9,14 @@ class CustomTextField extends StatelessWidget {
   final Widget? prefixIcon; // Added support for prefixIcon
 
   const CustomTextField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.label,
     required this.hintText,
     required this.keyboardType,
     required this.validator,
     this.prefixIcon, // Allow prefixIcon as an optional parameter
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class CustomTextField extends StatelessWidget {
         labelText: label,
         hintText: hintText,
         prefixIcon: prefixIcon, // Now prefixIcon works correctly
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
       ),
     );
   }

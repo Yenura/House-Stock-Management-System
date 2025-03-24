@@ -8,12 +8,12 @@ class AuthButton extends StatelessWidget {
   final bool isOutlined;
 
   const AuthButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.onPressed,
     this.isLoading = false,
     this.isOutlined = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class AuthButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
             side: isOutlined
-                ? BorderSide(color: AppColors.primary)
+                ? const BorderSide(color: AppColors.primary)
                 : BorderSide.none,
           ),
         ),
