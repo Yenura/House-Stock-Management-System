@@ -69,7 +69,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-        isCoreLibraryDesugaringEnabled = true // ✅ Kotlin DSL requires 'is' prefix
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -78,11 +78,14 @@ android {
 
     defaultConfig {
         applicationId = "com.example.stockorra"
-
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+        }
     }
 
     buildTypes {
