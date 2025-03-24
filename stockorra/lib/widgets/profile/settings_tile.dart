@@ -7,12 +7,12 @@ class SettingsTile extends StatelessWidget {
   final Color? backgroundColor;
 
   const SettingsTile({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     required this.onTap,
     this.backgroundColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

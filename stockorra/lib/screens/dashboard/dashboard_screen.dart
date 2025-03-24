@@ -16,23 +16,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-  title: Row(
-    children: [
-      Image.asset(
-        'assets/images/stockorra_logo.png',
-        height: 30,
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/images/stockorra_logo.png',
+              height: 30,
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              'STOCKORRA',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        backgroundColor: AppColors.primary,
+        elevation: 0,
       ),
-      const SizedBox(width: 10),
-      const Text(
-        'STOCKORRA',
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-    ],
-  ),
-  backgroundColor: AppColors.primary,
-  elevation: 0,
-),
+      drawer: _buildDrawer(),
       body: _buildBody(),
+      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
@@ -412,7 +414,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-
   Widget _buildDrawerItem({
     required String title,
     required IconData iconData,
@@ -466,6 +467,80 @@ class _DashboardScreenState extends State<DashboardScreen> {
           label: 'Profile',
         ),
       ],
+    );
+  }
+
+  Widget _buildDrawer() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: const BoxDecoration(
+              color: AppColors.primary,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.person, size: 35, color: AppColors.primary),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'User Name',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'user@email.com',
+                  style: TextStyle(color: Colors.white.withOpacity(0.8)),
+                ),
+              ],
+            ),
+          ),
+          _buildDrawerItem(
+            title: 'Dashboard',
+            iconData: Icons.dashboard_outlined,
+            isSelected: _selectedIndex == 0,
+            onTap: () {
+              setState(() => _selectedIndex = 0);
+              Navigator.pop(context);
+            },
+          ),
+          _buildDrawerItem(
+            title: 'Inventory',
+            iconData: Icons.inventory_2_outlined,
+            isSelected: _selectedIndex == 1,
+            onTap: () {
+              setState(() => _selectedIndex = 1);
+              Navigator.pop(context);
+            },
+          ),
+          _buildDrawerItem(
+            title: 'Shopping List',
+            iconData: Icons.shopping_cart_outlined,
+            isSelected: _selectedIndex == 2,
+            onTap: () {
+              setState(() => _selectedIndex = 2);
+              Navigator.pop(context);
+            },
+          ),
+          _buildDrawerItem(
+            title: 'Profile',
+            iconData: Icons.person_outline,
+            isSelected: _selectedIndex == 3,
+            onTap: () {
+              setState(() => _selectedIndex = 3);
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
     );
   }
 }

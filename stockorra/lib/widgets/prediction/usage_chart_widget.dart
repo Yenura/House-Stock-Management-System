@@ -71,7 +71,7 @@ class UsageChartWidget extends StatelessWidget {
     }
 
     return LineChartData(
-      gridData: FlGridData(show: true),
+      gridData: const FlGridData(show: true),
       titlesData: FlTitlesData(
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
@@ -103,8 +103,8 @@ class UsageChartWidget extends StatelessWidget {
             reservedSize: 30,
           ),
         ),
-        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       ),
       borderData: FlBorderData(
         show: true,
@@ -123,7 +123,7 @@ class UsageChartWidget extends StatelessWidget {
           color: Colors.blue,
           barWidth: 3,
           isStrokeCapRound: true,
-          dotData: FlDotData(show: true),
+          dotData: const FlDotData(show: true),
           belowBarData: BarAreaData(
             show: true,
             color: Colors.blue.withOpacity(0.2),

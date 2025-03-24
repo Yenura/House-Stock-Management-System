@@ -11,7 +11,7 @@ import 'verification_screen.dart';
 class SignUpScreen extends StatefulWidget {
   static const routeName = '/signup';
 
-  const SignUpScreen({Key? key}) : super(key: key);
+  const SignUpScreen({super.key});
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -80,7 +80,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   label: 'Full Name',
                   controller: _nameController,
                   hintText: 'Full Name',
-                  prefix: Icon(Icons.person_outline),
+                  prefix: const Icon(Icons.person_outline),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your name';
@@ -93,7 +93,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   label: 'Email',
                   controller: _emailController,
                   hintText: 'Email',
-                  prefix: Icon(Icons.email_outlined),
+                  prefix: const Icon(Icons.email_outlined),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -111,7 +111,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   label: 'Password',
                   controller: _passwordController,
                   hintText: 'Password',
-                  prefix: Icon(Icons.lock_outline),
+                  prefix: const Icon(Icons.lock_outline),
                   obscureText: !_passwordVisible,
                   suffix: IconButton(
                     icon: Icon(
