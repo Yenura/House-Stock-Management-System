@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../widgets/dashboard_card.dart';
+import '../inventory/inventory_home_screen.dart';
+import '../shopping_list/shopping_list_screen.dart';
+import '../prediction/suggestion_screen.dart';
+import '../profile/profile_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -16,22 +20,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-  title: Row(
-    children: [
-      Image.asset(
-        'assets/images/stockorra_logo.png',
-        height: 30,
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/images/stockorra_logo.png',
+              height: 30,
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              'STOCKORRA',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        backgroundColor: AppColors.primary,
+        elevation: 0,
       ),
-      const SizedBox(width: 10),
-      const Text(
-        'STOCKORRA',
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-    ],
-  ),
-  backgroundColor: AppColors.primary,
-  elevation: 0,
-),
       body: _buildBody(),
     );
   }
@@ -264,7 +268,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 iconData: Icons.inventory_2,
                 color: Colors.blue,
                 onTap: () {
-                  // Navigate to Inventory screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const InventoryHomeScreen()),
+                  );
                 },
               ),
               DashboardCard(
@@ -273,7 +281,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 iconData: Icons.shopping_cart,
                 color: Colors.green,
                 onTap: () {
-                  // Navigate to Shopping List screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ShoppingListScreen()),
+                  );
                 },
               ),
               DashboardCard(
@@ -282,7 +294,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 iconData: Icons.lightbulb_outline,
                 color: Colors.amber,
                 onTap: () {
-                  // Navigate to Suggestions screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SuggestionScreen()),
+                  );
                 },
               ),
               DashboardCard(
@@ -291,7 +307,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 iconData: Icons.person_outline,
                 color: Colors.purple,
                 onTap: () {
-                  // Navigate to Profile screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProfileScreen()),
+                  );
                 },
               ),
             ],
@@ -412,7 +432,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-
   Widget _buildDrawerItem({
     required String title,
     required IconData iconData,
@@ -444,6 +463,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
         setState(() {
           _selectedIndex = index;
         });
+        // Navigate to the respective screen based on index
+        switch (index) {
+          case 0:
+            // Already on Dashboard
+            break;
+          case 1:
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const InventoryHomeScreen()),
+            );
+            break;
+          case 2:
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ShoppingListScreen()),
+            );
+            break;
+          case 3:
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProfileScreen()),
+            );
+            break;
+        }
       },
       selectedItemColor: AppColors.primary,
       unselectedItemColor: Colors.grey,
