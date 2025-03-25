@@ -13,4 +13,8 @@ dependencies:
   fl_chart: ^0.70.2
   provider: ^6.1.2
   font_awesome_flutter: ^10.8.0
+  # REMOVE flutter_icons because it doesn't support null safety
+  # flutter_icons: ^1.1.0
 
+flutter:
+  uses-material-design: true
