@@ -8,7 +8,7 @@ import 'package:stockorra/screens/profile/settings_screen.dart';
 import 'package:stockorra/utils/constants.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
