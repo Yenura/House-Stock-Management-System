@@ -1,11 +1,9 @@
 // lib/screens/auth/verification_screen.dart
 
 import 'package:flutter/material.dart';
-import '../../widgets/auth/auth_button.dart';
+import 'package:stockorra/routes.dart';
 
 class VerificationScreen extends StatefulWidget {
-  static const routeName = '/verification';
-
   const VerificationScreen({super.key});
 
   @override
@@ -13,147 +11,83 @@ class VerificationScreen extends StatefulWidget {
 }
 
 class _VerificationScreenState extends State<VerificationScreen> {
-  final List<TextEditingController> _controllers = List.generate(
-    4,
-    (_) => TextEditingController(),
-  );
-  final List<FocusNode> _focusNodes = List.generate(
-    4,
-    (_) => FocusNode(),
-  );
-  final List<String> _otp = List.filled(4, '');
+  final _formKey = GlobalKey<FormState>();
+  final _codeController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
-    for (var focusNode in _focusNodes) {
-      focusNode.dispose();
-    }
+    _codeController.dispose();
     super.dispose();
   }
 
-  void _verifyOtp() {
-    final enteredOtp = _otp.join();
-    // For demo purposes, verify if OTP is 4 digits
-    if (enteredOtp.length == 4) {
-      Navigator.of(context).pushReplacementNamed('/home');
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid 4-digit code')),
-      );
+  Future<void> _verifyCode() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      setState(() => _isLoading = true);
+
+      try {
+        // TODO: Implement actual verification logic
+        await Future.delayed(const Duration(seconds: 1)); // Simulated delay
+        Navigator.pushReplacementNamed(context, Routes.dashboard);
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Verification failed: $e')),
+        );
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      appBar: AppBar(
+        title: const Text('Verify Email'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const Text(
+                'Please check your email for the verification code',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
               const SizedBox(height: 24),
-              Align(
-                alignment: Alignment.topLeft,
-                child: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.of(context).pop(),
+              TextFormField(
+                controller: _codeController,
+                decoration: const InputDecoration(
+                  labelText: 'Verification Code',
+                  prefixIcon: Icon(Icons.security),
                 ),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the verification code';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: _isLoading ? null : _verifyCode,
+                child: _isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text('Verify'),
               ),
               const SizedBox(height: 16),
-              Text(
-                'Verification',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'We have sent verification code to your mobile number',
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 32),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(
-                  4,
-                  (index) => SizedBox(
-                    width: 60,
-                    height: 60,
-                    child: TextField(
-                      controller: _controllers[index],
-                      focusNode: _focusNodes[index],
-                      keyboardType: TextInputType.number,
-                      textAlign: TextAlign.center,
-                      maxLength: 1,
-                      style: const TextStyle(fontSize: 24),
-                      decoration: InputDecoration(
-                        counterText: '',
-                        filled: true,
-                        fillColor: theme.colorScheme.surface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      onChanged: (value) {
-                        if (value.length == 1) {
-                          _otp[index] = value;
-                          if (index < 3) {
-                            _focusNodes[index + 1].requestFocus();
-                          } else {
-                            _focusNodes[index].unfocus();
-                            _verifyOtp();
-                          }
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 32),
-              AuthButton(
-                text: 'Verify',
-                onPressed: _verifyOtp,
-                isLoading: false,
-              ),
-              const SizedBox(height: 24),
               TextButton(
                 onPressed: () {
-                  // Resend code logic
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Code resent'),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
+                  // TODO: Implement resend code logic
                 },
-                child: RichText(
-                  text: TextSpan(
-                    text: "Didn't receive code? ",
-                    style: theme.textTheme.bodyMedium,
-                    children: [
-                      TextSpan(
-                        text: 'Resend',
-                        style: TextStyle(
-                          color: theme.primaryColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'You can resend code in 00:52',
-                style: theme.textTheme.bodySmall,
+                child: const Text('Resend Code'),
               ),
             ],
           ),

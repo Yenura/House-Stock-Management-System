@@ -6,6 +6,7 @@ import 'package:stockorra/utils/constants.dart';
 import 'package:stockorra/utils/validators.dart';
 import 'package:stockorra/widgets/auth/auth_button.dart';
 import 'package:stockorra/widgets/auth/custom_text_field.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddUserScreen extends StatefulWidget {
   const AddUserScreen({super.key});
@@ -19,6 +20,9 @@ class _AddUserScreenState extends State<AddUserScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _countryController = TextEditingController();
+  DateTime? _selectedDate;
+  String? _photoUrl;
   bool _isLoading = false;
 
   @override
@@ -26,33 +30,51 @@ class _AddUserScreenState extends State<AddUserScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _countryController.dispose();
     super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && mounted) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
   }
 
   Future<void> _addUser() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    
+
     setState(() {
       _isLoading = true;
     });
-    
+
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      
+
       final newUser = User(
         id: '', // Will be filled by Firebase
         name: _nameController.text.trim(),
         email: _emailController.text.trim(),
         roles: ['household_member'],
+        photoUrl: _photoUrl,
+        dateOfBirth: _selectedDate?.toIso8601String(),
+        country: _countryController.text.trim(),
       );
-      
+
       final success = await authProvider.addHouseholdMember(
         newUser,
         _passwordController.text,
       );
-      
+
       if (success && mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -91,7 +113,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(AppStrings.addUser),
@@ -110,11 +132,15 @@ class _AddUserScreenState extends State<AddUserScreen> {
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.grey.shade200,
-                    child: const Icon(
-                      Icons.person,
-                      size: 60,
-                      color: Colors.grey,
-                    ),
+                    backgroundImage:
+                        _photoUrl != null ? NetworkImage(_photoUrl!) : null,
+                    child: _photoUrl == null
+                        ? const Icon(
+                            Icons.person,
+                            size: 60,
+                            color: Colors.grey,
+                          )
+                        : null,
                   ),
                   CircleAvatar(
                     radius: 18,
@@ -151,6 +177,33 @@ class _AddUserScreenState extends State<AddUserScreen> {
                 controller: _passwordController,
                 obscureText: true,
                 validator: Validators.validatePassword,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                label: 'Country',
+                controller: _countryController,
+                validator: Validators.validateRequired,
+              ),
+              const SizedBox(height: 16),
+              InkWell(
+                onTap: () => _selectDate(context),
+                child: InputDecorator(
+                  decoration: const InputDecoration(
+                    labelText: 'Date of Birth',
+                    border: OutlineInputBorder(),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _selectedDate != null
+                            ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
+                            : 'Select Date',
+                      ),
+                      const Icon(Icons.calendar_today),
+                    ],
+                  ),
+                ),
               ),
               const SizedBox(height: 32),
               AuthButton(

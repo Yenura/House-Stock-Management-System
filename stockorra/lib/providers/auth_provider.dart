@@ -1,8 +1,9 @@
 // lib/providers/auth_provider.dart
 
 import 'package:flutter/material.dart';
-import '../models/user_model.dart';
-import '../services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:stockorra/models/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum AuthStatus {
   unknown,
@@ -10,324 +11,313 @@ enum AuthStatus {
   unauthenticated,
 }
 
-class AuthProvider with ChangeNotifier {
-  final AuthService _authService;
-  AuthStatus _status = AuthStatus.unknown;
-  User? _user;
+class AuthProvider extends ChangeNotifier {
+  final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  User? _currentUser;
   String? _error;
   bool _loading = false;
 
-  AuthProvider({AuthService? authService})
-      : _authService = authService ?? AuthService() {
-    // Listen to auth state changes
-    _authService.user.listen((user) {
-      _user = user;
-      _status =
-          user != null ? AuthStatus.authenticated : AuthStatus.unauthenticated;
+  User? get currentUser => _currentUser;
+  String? get error => _error;
+  bool get loading => _loading;
+
+  AuthProvider() {
+    _init();
+  }
+
+  void _init() {
+    _auth.authStateChanges().listen((firebase_auth.User? firebaseUser) async {
+      if (firebaseUser != null) {
+        // Fetch user data from Firestore
+        final doc =
+            await _firestore.collection('users').doc(firebaseUser.uid).get();
+        if (doc.exists && doc.data() != null) {
+          _currentUser = User.fromMap({
+            'id': doc.id,
+            ...doc.data()!,
+          });
+        }
+      } else {
+        _currentUser = null;
+      }
       notifyListeners();
     });
   }
 
-  // Getters
-  AuthStatus get status => _status;
-  User? get user => _user;
-  User? get currentUser => _user;
-  String? get error => _error;
-  bool get loading => _loading;
-  bool get isAuthenticated => _status == AuthStatus.authenticated;
-  bool get isUnauthenticated => _status == AuthStatus.unauthenticated;
-
-  // Sign in with email and password
-  Future<bool> signInWithEmailAndPassword(String email, String password) async {
-    _loading = true;
-    _error = null;
-    notifyListeners();
-
+  Future<bool> signIn(String email, String password) async {
     try {
-      await _authService.signInWithEmailAndPassword(email, password);
-      _loading = false;
+      _loading = true;
+      _error = null;
       notifyListeners();
-      return true;
-    } on AuthException catch (e) {
-      _error = e.message;
-    } catch (e) {
-      _error = 'Failed to sign in';
-    }
 
-    _loading = false;
-    notifyListeners();
-    return false;
-  }
-
-  // Sign up with email and password
-  Future<bool> signUpWithEmailAndPassword(
-    String name,
-    String email,
-    String password, {
-    String? dateOfBirth,
-    String? country,
-  }) async {
-    _loading = true;
-    _error = null;
-    notifyListeners();
-
-    try {
-      await _authService.signUpWithEmailAndPassword(
-        name,
-        email,
-        password,
-        dateOfBirth: dateOfBirth,
-        country: country,
+      final userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
       );
+
+      if (userCredential.user != null) {
+        final doc = await _firestore
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .get();
+        if (doc.exists && doc.data() != null) {
+          _currentUser = User.fromMap({
+            'id': doc.id,
+            ...doc.data()!,
+          });
+          notifyListeners();
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    } finally {
       _loading = false;
       notifyListeners();
-      return true;
-    } on AuthException catch (e) {
-      _error = e.message;
-    } catch (e) {
-      _error = 'Failed to sign up';
     }
-
-    _loading = false;
-    notifyListeners();
-    return false;
   }
 
-  // Add household member
-  Future<bool> addHouseholdMember(User newUser, String password) async {
-    _loading = true;
-    _error = null;
-    notifyListeners();
-
+  Future<bool> signUp(String name, String email, String password) async {
     try {
-      // Make sure the current user is authenticated
-      if (_user == null) {
-        throw AuthException(message: 'You must be logged in to add household members');
+      _loading = true;
+      _error = null;
+      notifyListeners();
+
+      final userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (userCredential.user != null) {
+        // Create user document in Firestore
+        final user = User(
+          id: userCredential.user!.uid,
+          name: name,
+          email: email,
+          roles: ['owner'],
+        );
+
+        await _firestore.collection('users').doc(user.id).set(user.toMap());
+        _currentUser = user;
+        notifyListeners();
+        return true;
       }
-      
-      // Add the new user with household member role
-      List<String> roles = newUser.roles ?? ['user'];
-      if (!roles.contains('household_member')) {
-        roles.add('household_member');
-      }
-      
-      // Create the user account
-      await _authService.createHouseholdMember(
-        name: newUser.name,
+      return false;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> signOut() async {
+    try {
+      await _auth.signOut();
+      _currentUser = null;
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+    }
+  }
+
+  Future<bool> resetPassword(String email) async {
+    try {
+      _loading = true;
+      _error = null;
+      notifyListeners();
+
+      await _auth.sendPasswordResetEmail(email: email);
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> updateUserProfile(User updatedUser) async {
+    try {
+      _loading = true;
+      _error = null;
+      notifyListeners();
+
+      await _firestore
+          .collection('users')
+          .doc(updatedUser.id)
+          .update(updatedUser.toMap());
+      _currentUser = updatedUser;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> addHouseholdMember(User newUser, String password) async {
+    try {
+      _loading = true;
+      _error = null;
+      notifyListeners();
+
+      // Create auth user
+      final userCredential = await _auth.createUserWithEmailAndPassword(
         email: newUser.email,
         password: password,
-        photoUrl: newUser.photoUrl,
-        dateOfBirth: newUser.dateOfBirth,
-        country: newUser.country,
-        roles: roles,
-        parentUserId: _user!.id,
       );
-      
+
+      if (userCredential.user != null) {
+        // Create user document in Firestore with proper type casting
+        final user = User(
+          id: userCredential.user!.uid,
+          name: newUser.name,
+          email: newUser.email,
+          roles: ['household_member'],
+          photoUrl: newUser.photoUrl,
+          dateOfBirth: newUser.dateOfBirth,
+          country: newUser.country,
+        );
+
+        // Add user to Firestore using toMap() method
+        await _firestore
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .set(user.toMap());
+
+        // Add user to household
+        if (_currentUser != null) {
+          await _firestore.collection('households').doc(_currentUser!.id).set({
+            'owner': _currentUser!.id,
+            'members': FieldValue.arrayUnion([userCredential.user!.uid]),
+          }, SetOptions(merge: true));
+        }
+
+        return true;
+      }
+      return false;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    } finally {
       _loading = false;
       notifyListeners();
-      return true;
-    } on AuthException catch (e) {
-      _error = e.message;
-    } catch (e) {
-      _error = 'Failed to add household member: ${e.toString()}';
     }
-
-    _loading = false;
-    notifyListeners();
-    return false;
   }
 
-  
+  Future<List<User>> getHouseholdMembers() async {
+    if (_currentUser == null) return [];
 
-  // Sign in with Google
-  Future<bool> signInWithGoogle() async {
+    try {
+      // Get the household document
+      final householdDoc =
+          await _firestore.collection('households').doc(_currentUser!.id).get();
+
+      if (!householdDoc.exists) {
+        // Create household if it doesn't exist
+        await _firestore.collection('households').doc(_currentUser!.id).set({
+          'owner': _currentUser!.id,
+          'members': [_currentUser!.id],
+        });
+        return [_currentUser!];
+      }
+
+      // Get member IDs from the household document
+      final memberIds =
+          List<String>.from(householdDoc.data()?['members'] ?? []);
+
+      // Fetch each member's data
+      final membersData = await Future.wait(
+          memberIds.map((id) => _firestore.collection('users').doc(id).get()));
+
+      // Convert to User objects
+      return membersData
+          .where((doc) => doc.exists && doc.data() != null)
+          .map((doc) => User.fromMap({
+                'id': doc.id,
+                ...doc.data()!,
+              }))
+          .toList();
+    } catch (e) {
+      _error = 'Failed to fetch household members';
+      notifyListeners();
+      return [];
+    }
+  }
+
+  // Update user details
+  Future<bool> updateUser(
+      String userId, Map<String, dynamic> updatedData) async {
     _loading = true;
     _error = null;
     notifyListeners();
 
     try {
-      await _authService.signInWithGoogle();
-      _loading = false;
+      await _firestore.collection('users').doc(userId).update(updatedData);
+      _currentUser = User.fromMap(updatedData);
       notifyListeners();
       return true;
-    } on AuthException catch (e) {
-      _error = e.message;
     } catch (e) {
-      _error = 'Failed to sign in with Google';
+      _error = 'Failed to update user';
+      notifyListeners();
+      return false;
+    } finally {
+      _loading = false;
+      notifyListeners();
     }
-
-    _loading = false;
-    notifyListeners();
-    return false;
   }
 
-  // Sign in with Facebook
-  Future<bool> signInWithFacebook() async {
+  // Delete user and remove from household
+  Future<bool> deleteUser(String userId) async {
     _loading = true;
     _error = null;
     notifyListeners();
 
     try {
-      await _authService.signInWithFacebook();
-      _loading = false;
+      // Remove from household first
+      if (_currentUser != null) {
+        await _firestore.collection('households').doc(_currentUser!.id).update({
+          'members': FieldValue.arrayRemove([userId])
+        });
+      }
+
+      // Delete user document
+      await _firestore.collection('users').doc(userId).delete();
+
+      // Delete auth user (only if current user is owner)
+      if (_currentUser?.roles.contains('owner') == true) {
+        final user = await _auth.currentUser;
+        if (user != null) {
+          await user.delete();
+        }
+      }
+
       notifyListeners();
       return true;
-    } on AuthException catch (e) {
-      _error = e.message;
     } catch (e) {
-      _error = 'Failed to sign in with Facebook';
-    }
-
-    _loading = false;
-    notifyListeners();
-    return false;
-  }
-
-  // Sign in with Apple
-  Future<bool> signInWithApple() async {
-    _loading = true;
-    _error = null;
-    notifyListeners();
-
-    try {
-      await _authService.signInWithApple();
+      _error = 'Failed to delete user';
+      notifyListeners();
+      return false;
+    } finally {
       _loading = false;
       notifyListeners();
-      return true;
-    } on AuthException catch (e) {
-      _error = e.message;
-    } catch (e) {
-      _error = 'Failed to sign in with Apple';
     }
-
-    _loading = false;
-    notifyListeners();
-    return false;
-  }
-
-  // Get user details
-Future<Map<String, dynamic>?> getUserDetails(String userId) async {
-  _loading = true;
-  _error = null;
-  notifyListeners();
-
-  try {
-    final userDetails = await _authService.getUserDetails(userId);
-    _loading = false;
-    notifyListeners();
-    return userDetails;
-  } catch (e) {
-    _error = 'Failed to get user details';
-    _loading = false;
-    notifyListeners();
-    return null;
-  }
-}
-Future<List<User>> getHouseholdMembers() async {
-  if (_user == null) return [];
-
-  try {
-    final householdDoc = await _authService.firestore
-        .collection('households')
-        .doc(_user!.id)
-        .get();
-
-    final memberIds = List<String>.from(householdDoc.data()?['members'] ?? []);
-
-    final members = await Future.wait(memberIds.map((id) async {
-      final userData = await _authService.getUserDetails(id);
-      return User.fromMap(userData);
-    }));
-
-    return members;
-  } catch (e) {
-    _error = 'Failed to fetch household members';
-    notifyListeners();
-    return [];
-  }
-}
-
-
-// Update user details
-Future<bool> updateUser(String userId, Map<String, dynamic> updatedData) async {
-  _loading = true;
-  _error = null;
-  notifyListeners();
-
-  try {
-    await _authService.updateUser(userId, updatedData);
-    _loading = false;
-    notifyListeners();
-    return true;
-  } catch (e) {
-    _error = 'Failed to update user';
-    _loading = false;
-    notifyListeners();
-    return false;
-  }
-}
-
-// Delete user
-Future<bool> deleteUser(String userId) async {
-  _loading = true;
-  _error = null;
-  notifyListeners();
-
-  try {
-    await _authService.deleteUser(userId);
-    _loading = false;
-    notifyListeners();
-    return true;
-  } catch (e) {
-    _error = 'Failed to delete user';
-    _loading = false;
-    notifyListeners();
-    return false;
-  }
-}
-
-  // Reset password
-  Future<bool> resetPassword(String email) async {
-    _loading = true;
-    _error = null;
-    notifyListeners();
-
-    try {
-      await _authService.resetPassword(email);
-      _loading = false;
-      notifyListeners();
-      return true;
-    } on AuthException catch (e) {
-      _error = e.message;
-    } catch (e) {
-      _error = 'Failed to reset password';
-    }
-
-    _loading = false;
-    notifyListeners();
-    return false;
-  }
-
-  // Sign out
-  Future<bool> signOut() async {
-    _loading = true;
-    _error = null;
-    notifyListeners();
-
-    try {
-      await _authService.signOut();
-      _loading = false;
-      notifyListeners();
-      return true;
-    } on AuthException catch (e) {
-      _error = e.message;
-    } catch (e) {
-      _error = 'Failed to sign out';
-    }
-
-    _loading = false;
-    notifyListeners();
-    return false;
   }
 
   // Clear error

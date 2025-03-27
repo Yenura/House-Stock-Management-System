@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stockorra/models/user_model.dart';
 import 'package:stockorra/providers/auth_provider.dart';
-import 'package:stockorra/screens/profile/add_user_screen.dart';
-import 'package:stockorra/screens/profile/edit_user_screen.dart';
-import 'package:stockorra/screens/profile/settings_screen.dart';
-import 'package:stockorra/utils/constants.dart';
+import 'package:stockorra/routes.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -13,134 +9,135 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    
+    final user = authProvider.currentUser;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.profile),
+        automaticallyImplyLeading: false,
+        title: const Text('Profile'),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const SettingsScreen(),
-                ),
-              );
-            },
+            onPressed: () => Navigator.pushNamed(context, Routes.settings),
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 20),
-            CircleAvatar(
+            const CircleAvatar(
               radius: 50,
-              backgroundColor: Colors.grey.shade200,
-              child: Text(
-                authProvider.currentUser?.name.substring(0, 1).toUpperCase() ?? 'U',
-                style: const TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                ),
-              ),
+              backgroundColor: Colors.grey,
+              child: Icon(Icons.person, size: 50, color: Colors.white),
             ),
             const SizedBox(height: 16),
             Text(
-              authProvider.currentUser?.name ?? 'User',
+              user?.name ?? 'User Name',
               style: const TextStyle(
-                fontSize: 22,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              authProvider.currentUser?.email ?? 'email@example.com',
-              style: TextStyle(
+              user?.email ?? 'email@example.com',
+              style: const TextStyle(
                 fontSize: 16,
-                color: Colors.grey.shade600,
+                color: Colors.grey,
               ),
             ),
             const SizedBox(height: 32),
-            const Divider(),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Household Members',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AddUserScreen(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add User'),
-                ),
-              ],
+            _buildProfileOption(
+              context,
+              'Edit Profile',
+              Icons.edit_outlined,
+              () {
+                if (user != null) {
+                  Navigator.pushNamed(
+                    context,
+                    Routes.editUser,
+                    arguments: user,
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please log in to edit profile'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
             ),
-            const SizedBox(height: 16),
-            FutureBuilder<List<User>>(
-              future: authProvider.getHouseholdMembers(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text('Error: ${snapshot.error}'),
-                  );
-                }
-                
-                final users = snapshot.data ?? [];
-                
-                if (users.isEmpty) {
-                  return const Center(
-                    child: Text('No household members found'),
-                  );
-                }
-                
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: users.length,
-                  itemBuilder: (context, index) {
-                    final user = users[index];
-                    return ListTile(
-                      title: Text(user.name),
-                      subtitle: Text(user.email),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditUserScreen(user: user),
-                            ),
-                          );
-                        },
+            _buildProfileOption(
+              context,
+              'Household Members',
+              Icons.people_outline,
+              () => Navigator.pushNamed(context, Routes.householdList),
+            ),
+            _buildProfileOption(
+              context,
+              'Add User',
+              Icons.person_add_outlined,
+              () => Navigator.pushNamed(context, Routes.addUser),
+            ),
+            _buildProfileOption(
+              context,
+              'Settings',
+              Icons.settings_outlined,
+              () => Navigator.pushNamed(context, Routes.settings),
+            ),
+            _buildProfileOption(
+              context,
+              'Logout',
+              Icons.logout,
+              () async {
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Logout'),
+                    content: const Text('Are you sure you want to logout?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Cancel'),
                       ),
-                    );
-                  },
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('Logout'),
+                      ),
+                    ],
+                  ),
                 );
+
+                if (confirmed == true && context.mounted) {
+                  await authProvider.signOut();
+                  if (context.mounted) {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      Routes.login,
+                      (route) => false,
+                    );
+                  }
+                }
               },
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildProfileOption(
+    BuildContext context,
+    String title,
+    IconData icon,
+    VoidCallback onTap,
+  ) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: onTap,
     );
   }
 }

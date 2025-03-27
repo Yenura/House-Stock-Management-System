@@ -10,7 +10,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(AppStrings.settings),
@@ -137,14 +137,6 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   const Divider(height: 1),
                   SettingsTile(
-                    icon: Icons.person_add,
-                    title: AppStrings.addAccount,
-                    onTap: () {
-                      // TODO: Navigate to add account screen
-                    },
-                  ),
-                  const Divider(height: 1),
-                  SettingsTile(
                     icon: Icons.logout,
                     title: AppStrings.logout,
                     onTap: () async {
@@ -152,7 +144,8 @@ class SettingsScreen extends StatelessWidget {
                         context: context,
                         builder: (context) => AlertDialog(
                           title: const Text('Logout'),
-                          content: const Text('Are you sure you want to logout?'),
+                          content:
+                              const Text('Are you sure you want to logout?'),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context, false),
@@ -165,7 +158,7 @@ class SettingsScreen extends StatelessWidget {
                           ],
                         ),
                       );
-                      
+
                       if (confirmed == true) {
                         await authProvider.signOut();
                         if (context.mounted) {

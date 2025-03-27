@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../services/firebase_service.dart';
 import '../../../models/item_model.dart';
 import '../../../widgets/prediction/usage_chart_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UsageAnalyticsScreen extends StatefulWidget {
   const UsageAnalyticsScreen({super.key});

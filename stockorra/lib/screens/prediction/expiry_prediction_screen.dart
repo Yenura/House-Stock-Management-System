@@ -3,6 +3,7 @@ import '../../../models/item_model.dart';
 import '../../../services/firebase_service.dart';
 import '../../../services/prediction_service.dart';
 import '../../../widgets/prediction/expiry_card_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ExpiryPredictionScreen extends StatefulWidget {
   const ExpiryPredictionScreen({super.key});

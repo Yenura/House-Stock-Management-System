@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:stockorra/providers/auth_provider.dart';
+import 'package:stockorra/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:stockorra/screens/launch/onboarding_screens.dart';
+import 'package:stockorra/screens/dashboard/dashboard_screen.dart';
+import 'package:stockorra/screens/inventory/inventory_home_screen.dart';
+import 'package:stockorra/screens/analytics/analytics_screen.dart';
+import 'package:stockorra/screens/notifications/notifications_screen.dart';
+import 'package:stockorra/screens/profile/profile_screen.dart';
+import 'package:stockorra/services/navigation_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -9,21 +17,27 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp(
-      {super.key}); // Using 'super.key' to pass the key to the superclass constructor
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Stockorra',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        primaryColor: const Color(0xFF4D7D4D),
-        scaffoldBackgroundColor: const Color(0xFFF5F8F5),
-        fontFamily: 'Roboto',
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
+      child: MaterialApp(
+        title: 'Stockorra',
+        debugShowCheckedModeBanner: false,
+        navigatorKey: NavigationService().navigatorKey,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          scaffoldBackgroundColor: Colors.grey[100],
+          fontFamily: 'Roboto',
+        ),
+        initialRoute: Routes.launch1,
+        routes: Routes.getRoutes(),
+        onGenerateRoute: Routes.onGenerateRoute,
       ),
-      home: const DashboardScreen(),
     );
   }
 }

@@ -1,16 +1,10 @@
 // lib/screens/auth/signup_screen.dart
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
-import '../../widgets/auth/auth_button.dart';
-import '../../widgets/auth/social_login_button.dart';
-import '../../widgets/auth/custom_text_field.dart';
-import 'verification_screen.dart';
+import 'package:stockorra/routes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUpScreen extends StatefulWidget {
-  static const routeName = '/signup';
-
   const SignUpScreen({super.key});
 
   @override
@@ -22,222 +16,154 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _passwordVisible = false;
+  final _confirmPasswordController = TextEditingController();
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+  Future<void> _signUp() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      setState(() => _isLoading = true);
 
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    final success = await authProvider.signUpWithEmailAndPassword(
-      _nameController.text.trim(),
-      _emailController.text.trim(),
-      _passwordController.text,
-    );
-
-    if (success && mounted) {
-      // Navigate to verification screen
-      Navigator.of(context).pushReplacementNamed(VerificationScreen.routeName);
+      try {
+        // TODO: Implement actual signup logic with Firebase
+        await Future.delayed(const Duration(seconds: 1)); // Simulated delay
+        Navigator.pushReplacementNamed(context, Routes.verification);
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sign up failed: $e')),
+        );
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-    final theme = Theme.of(context);
-
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 24),
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.of(context).pop(),
+      appBar: AppBar(
+        title: const Text('Sign Up'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Full Name',
+                  prefixIcon: Icon(Icons.person),
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  'Sign Up',
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  prefixIcon: Icon(Icons.email),
                 ),
-                const SizedBox(height: 24),
-                CustomTextField(
-                  label: 'Full Name',
-                  controller: _nameController,
-                  hintText: 'Full Name',
-                  prefix: const Icon(Icons.person_outline),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your name';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                CustomTextField(
-                  label: 'Email',
-                  controller: _emailController,
-                  hintText: 'Email',
-                  prefix: const Icon(Icons.email_outlined),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                        .hasMatch(value)) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                CustomTextField(
-                  label: 'Password',
-                  controller: _passwordController,
-                  hintText: 'Password',
-                  prefix: const Icon(Icons.lock_outline),
-                  obscureText: !_passwordVisible,
-                  suffix: IconButton(
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _passwordController,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  prefixIcon: const Icon(Icons.lock),
+                  suffixIcon: IconButton(
                     icon: Icon(
-                      _passwordVisible
+                      _isPasswordVisible
                           ? Icons.visibility_off
                           : Icons.visibility,
                     ),
                     onPressed: () {
                       setState(() {
-                        _passwordVisible = !_passwordVisible;
+                        _isPasswordVisible = !_isPasswordVisible;
                       });
                     },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
-                    }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
-                    return null;
-                  },
                 ),
-                const SizedBox(height: 24),
-                if (authProvider.error != null)
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.red.shade100,
-                      borderRadius: BorderRadius.circular(8),
+                obscureText: !_isPasswordVisible,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a password';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _confirmPasswordController,
+                decoration: InputDecoration(
+                  labelText: 'Confirm Password',
+                  prefixIcon: const Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isConfirmPasswordVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                     ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.error_outline, color: Colors.red.shade700),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            authProvider.error!,
-                            style: TextStyle(color: Colors.red.shade700),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                AuthButton(
-                  text: 'Sign Up',
-                  onPressed: _submit,
-                  isLoading: authProvider.loading,
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    const Expanded(child: Divider()),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        'or continue with',
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ),
-                    const Expanded(child: Divider()),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SocialLoginButton(
-                      text: 'Google',
-                      iconPath: 'assets/icons/google.png',
-                      onTap: () async {
-                        final success = await authProvider.signInWithGoogle();
-                        if (success && mounted) {
-                          Navigator.of(context).pushReplacementNamed('/home');
-                        }
-                      },
-                    ),
-                    SocialLoginButton(
-                      text: 'Facebook',
-                      iconPath: 'assets/icons/facebook.png',
-                      onTap: () async {
-                        final success = await authProvider.signInWithFacebook();
-                        if (success && mounted) {
-                          Navigator.of(context).pushReplacementNamed('/home');
-                        }
-                      },
-                    ),
-                    SocialLoginButton(
-                      text: 'Apple',
-                      iconPath: 'assets/icons/apple.png',
-                      onTap: () async {
-                        final success = await authProvider.signInWithApple();
-                        if (success && mounted) {
-                          Navigator.of(context).pushReplacementNamed('/home');
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                Center(
-                  child: TextButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      setState(() {
+                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                      });
                     },
-                    child: RichText(
-                      text: TextSpan(
-                        text: 'Already have an account? ',
-                        style: theme.textTheme.bodyMedium,
-                        children: [
-                          TextSpan(
-                            text: 'Log in',
-                            style: TextStyle(
-                              color: theme.primaryColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ),
                 ),
-                const SizedBox(height: 16),
-              ],
-            ),
+                obscureText: !_isConfirmPasswordVisible,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please confirm your password';
+                  }
+                  if (value != _passwordController.text) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: _isLoading ? null : _signUp,
+                child: _isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text('Sign Up'),
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, Routes.login);
+                },
+                child: const Text('Already have an account? Login'),
+              ),
+            ],
           ),
         ),
       ),
