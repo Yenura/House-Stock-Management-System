@@ -26,6 +26,10 @@ class _ExpiryPredictionScreenState extends State<ExpiryPredictionScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Expiry Predictions'),
+        leading: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),

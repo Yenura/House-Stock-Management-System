@@ -38,7 +38,13 @@ class _InventoryAddScreenState extends State<InventoryAddScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Inventory Item')),
+      appBar: AppBar(
+        title: const Text('Add Item'),
+        leading: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

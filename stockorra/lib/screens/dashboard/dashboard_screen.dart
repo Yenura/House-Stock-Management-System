@@ -32,9 +32,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
         backgroundColor: AppColors.primary,
         elevation: 0,
       ),
-      drawer: _buildDrawer(),
       body: _buildBody(),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: Colors.grey[300]!,
+              width: 1,
+            ),
+          ),
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          selectedItemColor: AppColors.primary,
+          unselectedItemColor: Colors.grey,
+          backgroundColor: Colors.white,
+          type: BottomNavigationBarType.fixed,
+          showUnselectedLabels: true,
+          selectedLabelStyle: const TextStyle(fontSize: 12),
+          unselectedLabelStyle: const TextStyle(fontSize: 12),
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined),
+              activeIcon: Icon(Icons.home),
+              label: 'Dashboard',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.inventory_2_outlined),
+              activeIcon: Icon(Icons.inventory_2),
+              label: 'Inventory',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart_outlined),
+              activeIcon: Icon(Icons.shopping_cart),
+              label: 'Shopping',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline),
+              activeIcon: Icon(Icons.person),
+              label: 'Profile',
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -98,20 +143,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: Row(
               children: [
                 Icon(
-                  Icons.search,
+                  Icons.search_rounded,
                   color: Colors.grey[600],
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: Text(
-                    'Search items...',
-                    style: TextStyle(
-                      color: Colors.grey[600],
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search items...',
+                      hintStyle: TextStyle(
+                        color: Colors.grey[600],
+                      ),
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
                     ),
                   ),
                 ),
                 Icon(
-                  Icons.qr_code_scanner,
+                  Icons.qr_code_scanner_rounded,
                   color: Colors.grey[600],
                 ),
               ],
@@ -143,7 +193,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: _buildStatCard(
                   title: 'Total Items',
                   value: '53',
-                  iconData: Icons.inventory_2_outlined,
+                  iconData: Icons.inventory_2_rounded,
                   color: Colors.blue,
                 ),
               ),
@@ -152,7 +202,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: _buildStatCard(
                   title: 'Low Stock',
                   value: '7',
-                  iconData: Icons.warning_amber_outlined,
+                  iconData: Icons.warning_amber_rounded,
                   color: Colors.orange,
                 ),
               ),
@@ -165,7 +215,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: _buildStatCard(
                   title: 'Expiring Soon',
                   value: '5',
-                  iconData: Icons.access_time,
+                  iconData: Icons.timer_rounded,
                   color: Colors.red,
                 ),
               ),
@@ -174,7 +224,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: _buildStatCard(
                   title: 'To Buy',
                   value: '12',
-                  iconData: Icons.shopping_cart_outlined,
+                  iconData: Icons.shopping_cart_rounded,
                   color: Colors.green,
                 ),
               ),
@@ -262,39 +312,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               DashboardCard(
                 title: 'Inventory',
-                subtitle: 'Track your items',
-                iconData: Icons.inventory_2,
+                subtitle: 'Manage your items',
+                iconData: Icons.inventory_2_rounded,
                 color: Colors.blue,
-                onTap: () {
-                  // Navigate to Inventory screen
-                },
+                onTap: () => Navigator.pushNamed(context, '/inventory'),
               ),
               DashboardCard(
                 title: 'Shopping List',
-                subtitle: 'Things to buy',
-                iconData: Icons.shopping_cart,
+                subtitle: 'Track items to buy',
+                iconData: Icons.shopping_cart_rounded,
                 color: Colors.green,
-                onTap: () {
-                  // Navigate to Shopping List screen
-                },
+                onTap: () => Navigator.pushNamed(context, '/shopping'),
               ),
               DashboardCard(
-                title: 'Suggestions',
-                subtitle: 'AI-powered insights',
-                iconData: Icons.lightbulb_outline,
+                title: 'Predictions',
+                subtitle: 'Smart expiry alerts',
+                iconData: Icons.analytics_rounded,
                 color: Colors.amber,
-                onTap: () {
-                  // Navigate to Suggestions screen
-                },
+                onTap: () => Navigator.pushNamed(context, '/predictions'),
               ),
               DashboardCard(
                 title: 'Profile',
-                subtitle: 'Manage settings',
-                iconData: Icons.person_outline,
+                subtitle: 'Account settings',
+                iconData: Icons.person_rounded,
                 color: Colors.purple,
-                onTap: () {
-                  // Navigate to Profile screen
-                },
+                onTap: () => Navigator.pushNamed(context, '/profile'),
               ),
             ],
           ),
@@ -321,25 +363,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
           _buildActivityItem(
             title: 'Milk added to inventory',
             time: '2 hours ago',
-            iconData: Icons.add_circle_outline,
+            iconData: Icons.add_circle_rounded,
             color: Colors.green,
           ),
           _buildActivityItem(
             title: 'Eggs running low',
             time: '5 hours ago',
-            iconData: Icons.warning_amber_outlined,
+            iconData: Icons.warning_amber_rounded,
             color: Colors.orange,
           ),
           _buildActivityItem(
             title: 'Bread added to shopping list',
             time: 'Yesterday',
-            iconData: Icons.shopping_cart_outlined,
+            iconData: Icons.shopping_cart_rounded,
             color: Colors.blue,
           ),
           _buildActivityItem(
             title: 'Yogurt expiring soon',
             time: 'Yesterday',
-            iconData: Icons.access_time,
+            iconData: Icons.timer_rounded,
             color: Colors.red,
           ),
         ],
@@ -408,136 +450,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Icons.arrow_forward_ios,
             color: Colors.grey[400],
             size: 16,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDrawerItem({
-    required String title,
-    required IconData iconData,
-    bool isSelected = false,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      leading: Icon(
-        iconData,
-        color: isSelected ? AppColors.primary : Colors.grey[600],
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: isSelected ? AppColors.primary : AppColors.text,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-        ),
-      ),
-      onTap: onTap,
-      selected: isSelected,
-      selectedTileColor: AppColors.primary.withOpacity(0.1),
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      currentIndex: _selectedIndex,
-      onTap: (index) {
-        setState(() {
-          _selectedIndex = index;
-        });
-      },
-      selectedItemColor: AppColors.primary,
-      unselectedItemColor: Colors.grey,
-      type: BottomNavigationBarType.fixed,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.dashboard_outlined),
-          label: 'Dashboard',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.inventory_2_outlined),
-          label: 'Inventory',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_cart_outlined),
-          label: 'Shopping',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person_outline),
-          label: 'Profile',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDrawer() {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: const BoxDecoration(
-              color: AppColors.primary,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.person, size: 35, color: AppColors.primary),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'User Name',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  'user@email.com',
-                  style: TextStyle(color: Colors.white.withOpacity(0.8)),
-                ),
-              ],
-            ),
-          ),
-          _buildDrawerItem(
-            title: 'Dashboard',
-            iconData: Icons.dashboard_outlined,
-            isSelected: _selectedIndex == 0,
-            onTap: () {
-              setState(() => _selectedIndex = 0);
-              Navigator.pop(context);
-            },
-          ),
-          _buildDrawerItem(
-            title: 'Inventory',
-            iconData: Icons.inventory_2_outlined,
-            isSelected: _selectedIndex == 1,
-            onTap: () {
-              setState(() => _selectedIndex = 1);
-              Navigator.pop(context);
-            },
-          ),
-          _buildDrawerItem(
-            title: 'Shopping List',
-            iconData: Icons.shopping_cart_outlined,
-            isSelected: _selectedIndex == 2,
-            onTap: () {
-              setState(() => _selectedIndex = 2);
-              Navigator.pop(context);
-            },
-          ),
-          _buildDrawerItem(
-            title: 'Profile',
-            iconData: Icons.person_outline,
-            isSelected: _selectedIndex == 3,
-            onTap: () {
-              setState(() => _selectedIndex = 3);
-              Navigator.pop(context);
-            },
           ),
         ],
       ),

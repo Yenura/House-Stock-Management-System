@@ -259,6 +259,10 @@ Future<void> _deleteUser() async {
     return Scaffold(
       appBar: AppBar(
         title: const Text(AppStrings.editUser),
+        leading: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.delete),

@@ -51,6 +51,10 @@ class _SuggestionScreenState extends State<SuggestionScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Purchase Suggestions'),
+        leading: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),

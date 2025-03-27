@@ -17,6 +17,10 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(AppStrings.profile),
+        leading: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),

@@ -43,7 +43,13 @@ class _InventoryHomeScreenState extends State<InventoryHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Inventory')),
+      appBar: AppBar(
+        title: const Text('Inventory'),
+        leading: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),
+        ),
+      ),
       body: _items.isEmpty
           ? const Center(
               child: Text('No items available. Add new inventory.'),

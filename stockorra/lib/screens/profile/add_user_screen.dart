@@ -95,6 +95,10 @@ class _AddUserScreenState extends State<AddUserScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(AppStrings.addUser),
+        leading: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
