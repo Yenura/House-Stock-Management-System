@@ -7,6 +7,7 @@ import '../../widgets/auth/custom_text_field.dart';
 import 'signup_screen.dart';
 import 'forgot_password_screen.dart';
 
+// LoginScreen is a StatefulWidget to manage form state and visibility toggles
 class LoginScreen extends StatefulWidget {
   static const routeName = '/login';
 
@@ -17,28 +18,32 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _passwordVisible = false;
+  final _formKey = GlobalKey<FormState>(); // Key to validate form fields
+  final _emailController = TextEditingController(); // Controller for email input
+  final _passwordController = TextEditingController(); // Controller for password input
+  bool _passwordVisible = false; // Toggles password visibility
 
   @override
   void dispose() {
+    // Dispose of controllers to free resources
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
+  // Handles form submission
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) return; // Validate inputs
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
+    // Attempt login with provided credentials
     final success = await authProvider.signInWithEmailAndPassword(
       _emailController.text.trim(),
       _passwordController.text.trim(),
     );
 
+    // If login successful, navigate to home screen
     if (success && mounted) {
       Navigator.of(context).pushReplacementNamed('/home');
     }
@@ -46,24 +51,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-    final theme = Theme.of(context);
+    final authProvider = Provider.of<AuthProvider>(context); // Access auth state
+    final theme = Theme.of(context); // Access app theme
 
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Form(
-            key: _formKey,
+            key: _formKey, // Assign form key
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 24),
+                // Back button to navigate to previous screen
                 IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 const SizedBox(height: 16),
+                // Title text
                 Text(
                   "Let's get you in",
                   style: theme.textTheme.headlineMedium?.copyWith(
@@ -72,12 +79,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 24),
                 
-                // Email Input Field
+                // Email input field
                 CustomTextField(
                   controller: _emailController,
-                  label: 'Email', // Fixed parameter name
+                  label: 'Email',
                   hintText: 'Enter your email',
-                  prefix: const Icon(Icons.email), // Fixed parameter name
+                  prefix: const Icon(Icons.email),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -89,17 +96,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                
+
                 const SizedBox(height: 16),
                 
-                // Password Input Field
+                // Password input field with toggle visibility
                 CustomTextField(
                   controller: _passwordController,
-                  label: 'Password', // Fixed parameter name
+                  label: 'Password',
                   hintText: 'Enter your password',
-                  prefix: const Icon(Icons.lock_outline), // Fixed parameter name
+                  prefix: const Icon(Icons.lock_outline),
                   obscureText: !_passwordVisible,
-                  suffix: IconButton( // Fixed parameter name
+                  suffix: IconButton(
                     icon: Icon(
                       _passwordVisible ? Icons.visibility_off : Icons.visibility,
                     ),
@@ -116,10 +123,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                
+
                 const SizedBox(height: 8),
-                
-                // Forgot Password
+
+                // Link to forgot password screen
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -132,10 +139,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
-                // Error Message
+
+                // Display error message if login fails
                 if (authProvider.error != null)
                   Container(
                     padding: const EdgeInsets.all(8),
@@ -157,17 +164,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                
-                // Login Button
+
+                // Login button
                 AuthButton(
                   text: 'Log In',
                   onPressed: _submit,
                   isLoading: authProvider.loading,
                 ),
-                
+
                 const SizedBox(height: 24),
-                
-                // Divider
+
+                // Divider with "or continue with" label
                 Row(
                   children: [
                     const Expanded(child: Divider()),
@@ -181,10 +188,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Expanded(child: Divider()),
                   ],
                 ),
-                
+
                 const SizedBox(height: 24),
-                
-                // Social Login Buttons
+
+                // Row of social login buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -220,10 +227,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
-                
+
                 const Spacer(),
-                
-                // Sign Up Link
+
+                // Link to sign up screen
                 Center(
                   child: TextButton(
                     onPressed: () {
@@ -246,7 +253,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 16),
               ],
             ),
