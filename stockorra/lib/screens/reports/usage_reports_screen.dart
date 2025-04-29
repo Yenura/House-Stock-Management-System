@@ -6,6 +6,7 @@ class UsageReportsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // AppBar with the title 'Usage Reports'
       appBar: AppBar(
         title: const Text('Usage Reports'),
       ),
@@ -14,6 +15,7 @@ class UsageReportsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Report section for 'Inventory Usage'
             _buildReportSection(
               'Inventory Usage',
               [
@@ -23,7 +25,8 @@ class UsageReportsScreen extends StatelessWidget {
                 'Current Stock Value: \$2,500',
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 24), // Space between sections
+            // Report section for 'Category Analysis'
             _buildReportSection(
               'Category Analysis',
               [
@@ -33,7 +36,8 @@ class UsageReportsScreen extends StatelessWidget {
                 'Slowest Moving Items: Household Items',
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 24), // Space between sections
+            // Report section for 'Expiry Statistics'
             _buildReportSection(
               'Expiry Statistics',
               [
@@ -43,7 +47,8 @@ class UsageReportsScreen extends StatelessWidget {
                 'Waste Prevention Rate: 92%',
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 24), // Space between sections
+            // Button to trigger report download (to be implemented)
             Center(
               child: ElevatedButton(
                 onPressed: () {
@@ -58,6 +63,7 @@ class UsageReportsScreen extends StatelessWidget {
     );
   }
 
+  // Helper method to build each report section
   Widget _buildReportSection(String title, List<String> items) {
     return Card(
       child: Padding(
@@ -65,6 +71,7 @@ class UsageReportsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Title for the report section
             Text(
               title,
               style: const TextStyle(
@@ -72,7 +79,8 @@ class UsageReportsScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16), // Space between title and items
+            // Display each item in the list
             ...items.map((item) => Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Text(
