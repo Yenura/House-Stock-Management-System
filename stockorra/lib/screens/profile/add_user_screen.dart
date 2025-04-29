@@ -16,17 +16,18 @@ class AddUserScreen extends StatefulWidget {
 }
 
 class _AddUserScreenState extends State<AddUserScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _countryController = TextEditingController();
-  DateTime? _selectedDate;
-  String? _photoUrl;
-  bool _isLoading = false;
+  final _formKey = GlobalKey<FormState>(); // Key to identify the form
+  final _nameController = TextEditingController(); // Controller for the name field
+  final _emailController = TextEditingController(); // Controller for the email field
+  final _passwordController = TextEditingController(); // Controller for the password field
+  final _countryController = TextEditingController(); // Controller for the country field
+  DateTime? _selectedDate; // Variable to hold the selected date of birth
+  String? _photoUrl; // Variable to hold the user's photo URL
+  bool _isLoading = false; // Flag to manage loading state
 
   @override
   void dispose() {
+    // Dispose of controllers when the widget is disposed
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -34,6 +35,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
     super.dispose();
   }
 
+  // Method to allow the user to select a date for the date of birth
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -48,20 +50,23 @@ class _AddUserScreenState extends State<AddUserScreen> {
     }
   }
 
+  // Method to handle adding a new user
   Future<void> _addUser() async {
+    // Validate form inputs
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
     setState(() {
-      _isLoading = true;
+      _isLoading = true; // Show loading indicator
     });
 
     try {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final authProvider = Provider.of<AuthProvider>(context, listen: false); // Get AuthProvider instance
 
+      // Create a new User model from input data
       final newUser = User(
-        id: '', // Will be filled by Firebase
+        id: '', // ID will be filled by Firebase
         name: _nameController.text.trim(),
         email: _emailController.text.trim(),
         roles: ['household_member'],
@@ -70,13 +75,14 @@ class _AddUserScreenState extends State<AddUserScreen> {
         country: _countryController.text.trim(),
       );
 
+      // Attempt to add the new user via AuthProvider
       final success = await authProvider.addHouseholdMember(
         newUser,
-        _passwordController.text,
+        _passwordController.text, // Password input
       );
 
       if (success && mounted) {
-        Navigator.pop(context);
+        Navigator.pop(context); // Close the screen on success
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('User added successfully'),
@@ -84,7 +90,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
           ),
         );
       } else if (mounted) {
-        // Show error from auth provider
+        // Show error if user creation fails
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: ${authProvider.error}'),
@@ -94,6 +100,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
       }
     } catch (e) {
       if (mounted) {
+        // Handle unexpected errors
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: ${e.toString()}'),
@@ -102,6 +109,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
         );
       }
     } finally {
+      // Hide loading state after operation is complete
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -112,16 +120,16 @@ class _AddUserScreenState extends State<AddUserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context); // Get AuthProvider instance
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.addUser),
+        title: const Text(AppStrings.addUser), // AppBar title
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16), // Padding for the body
         child: Form(
-          key: _formKey,
+          key: _formKey, // Link form key to the form
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -132,8 +140,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.grey.shade200,
-                    backgroundImage:
-                        _photoUrl != null ? NetworkImage(_photoUrl!) : null,
+                    backgroundImage: _photoUrl != null ? NetworkImage(_photoUrl!) : null,
                     child: _photoUrl == null
                         ? const Icon(
                             Icons.person,
@@ -152,7 +159,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
                         color: Colors.white,
                       ),
                       onPressed: () {
-                        // TODO: Implement image picker
+                        // TODO: Implement image picker for photo URL
                       },
                     ),
                   ),
@@ -186,7 +193,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
               ),
               const SizedBox(height: 16),
               InkWell(
-                onTap: () => _selectDate(context),
+                onTap: () => _selectDate(context), // Open date picker on tap
                 child: InputDecorator(
                   decoration: const InputDecoration(
                     labelText: 'Date of Birth',
@@ -198,7 +205,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
                       Text(
                         _selectedDate != null
                             ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
-                            : 'Select Date',
+                            : 'Select Date', // Display selected date or prompt to select a date
                       ),
                       const Icon(Icons.calendar_today),
                     ],
@@ -208,8 +215,8 @@ class _AddUserScreenState extends State<AddUserScreen> {
               const SizedBox(height: 32),
               AuthButton(
                 text: 'Add User',
-                onPressed: () => authProvider.loading ? null : _addUser(),
-                isLoading: _isLoading || authProvider.loading,
+                onPressed: () => authProvider.loading ? null : _addUser(), // Call _addUser method on button press
+                isLoading: _isLoading || authProvider.loading, // Show loading state if necessary
               ),
               if (authProvider.error != null)
                 Padding(
@@ -217,7 +224,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
                   child: Text(
                     authProvider.error!,
                     style: const TextStyle(color: Colors.red),
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.center, // Show error message from auth provider
                   ),
                 ),
             ],
