@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
+// A reusable card widget for the dashboard grid (Inventory, Shopping, etc.)
 class DashboardCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final IconData iconData;
-  final Color color;
-  final VoidCallback onTap;
+  final String title; // Main title (e.g., Inventory)
+  final String subtitle; // Supporting text (e.g., Manage your items)
+  final IconData iconData; // Icon displayed in the card
+  final Color color; // Theme color for icon background
+  final VoidCallback onTap; // Action to perform when tapped
 
   const DashboardCard({
     super.key,
@@ -19,15 +20,15 @@ class DashboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: onTap, // Handle card tap interaction
       child: Container(
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(15), // Rounded corners
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withOpacity(0.05), // Subtle shadow
               blurRadius: 5,
               offset: const Offset(0, 2),
             ),
@@ -37,6 +38,7 @@ class DashboardCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Icon container with light background tint
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -50,6 +52,7 @@ class DashboardCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 15),
+            // Title text
             Text(
               title,
               style: const TextStyle(
@@ -58,6 +61,7 @@ class DashboardCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 5),
+            // Subtitle text
             Text(
               subtitle,
               style: TextStyle(
