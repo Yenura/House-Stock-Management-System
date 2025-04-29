@@ -11,7 +11,7 @@ class InventoryHomeScreen extends StatelessWidget {
     super.key,
     required this.inventoryService,
   });
-
+//.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
