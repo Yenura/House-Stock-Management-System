@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stockorra/providers/auth_provider.dart';
-import 'package:stockorra/utils/constants.dart';
-import 'package:stockorra/widgets/profile/settings_tile.dart';
+import 'package:stockorra/providers/auth_provider.dart'; // Auth logic
+import 'package:stockorra/utils/constants.dart'; // String and color constants
+import 'package:stockorra/widgets/profile/settings_tile.dart'; // Custom tile widget for settings
 
+// Settings screen showing account, support, and logout options
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-    
+    final authProvider = Provider.of<AuthProvider>(context); // Access auth context
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.settings),
+        title: const Text(AppStrings.settings), // "Settings" title
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Section: Account settings
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 8),
               child: Text(
@@ -38,6 +40,7 @@ class SettingsScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
+                  // Edit profile
                   SettingsTile(
                     icon: Icons.person,
                     title: AppStrings.editProfile,
@@ -46,6 +49,7 @@ class SettingsScreen extends StatelessWidget {
                     },
                   ),
                   const Divider(height: 1),
+                  // Security settings
                   SettingsTile(
                     icon: Icons.security,
                     title: AppStrings.security,
@@ -54,6 +58,7 @@ class SettingsScreen extends StatelessWidget {
                     },
                   ),
                   const Divider(height: 1),
+                  // Notification preferences
                   SettingsTile(
                     icon: Icons.notifications,
                     title: AppStrings.notifications,
@@ -62,6 +67,7 @@ class SettingsScreen extends StatelessWidget {
                     },
                   ),
                   const Divider(height: 1),
+                  // Privacy policy / controls
                   SettingsTile(
                     icon: Icons.privacy_tip,
                     title: AppStrings.privacy,
@@ -72,7 +78,10 @@ class SettingsScreen extends StatelessWidget {
                 ],
               ),
             ),
+
             const SizedBox(height: 24),
+
+            // Section: Support
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 8),
               child: Text(
@@ -109,7 +118,10 @@ class SettingsScreen extends StatelessWidget {
                 ],
               ),
             ),
+
             const SizedBox(height: 24),
+
+            // Section: Actions (logout, report, etc.)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 8),
               child: Text(
@@ -144,6 +156,7 @@ class SettingsScreen extends StatelessWidget {
                     },
                   ),
                   const Divider(height: 1),
+                  // Logout with confirmation dialog
                   SettingsTile(
                     icon: Icons.logout,
                     title: AppStrings.logout,
@@ -165,13 +178,14 @@ class SettingsScreen extends StatelessWidget {
                           ],
                         ),
                       );
-                      
+
+                      // Proceed if confirmed
                       if (confirmed == true) {
-                        await authProvider.signOut();
+                        await authProvider.signOut(); // Clear auth state
                         if (context.mounted) {
                           Navigator.pushNamedAndRemoveUntil(
                             context,
-                            '/login',
+                            '/login', // Redirect to login screen
                             (route) => false,
                           );
                         }
