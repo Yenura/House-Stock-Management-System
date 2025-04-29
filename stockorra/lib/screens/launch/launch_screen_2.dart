@@ -80,3 +80,4 @@ class LaunchScreen2 extends StatelessWidget {
     );
   }
 }
+//.
