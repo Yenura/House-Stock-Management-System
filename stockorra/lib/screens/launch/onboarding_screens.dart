@@ -295,7 +295,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 iconData: Icons.lightbulb_outline,
                 color: Colors.amber,
                 onTap: () {
-                  // Navigate to Suggestions screen
+                  // Navigate to Suggestions screen.
                 },
               ),
               DashboardCard(
