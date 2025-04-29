@@ -35,7 +35,7 @@ class _EditInventoryScreenState extends State<EditInventoryScreen> {
     _expirationController =
         TextEditingController(text: widget.initialData['expiration'] ?? '');
   }
-
+//.
   @override
   void dispose() {
     _nameController.dispose();
