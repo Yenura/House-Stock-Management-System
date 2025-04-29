@@ -10,7 +10,7 @@ import 'edit_inventory_screen.dart';
 
 class InventoryListScreen extends StatefulWidget {
   final InventoryService inventoryService;
-
+//.
   const InventoryListScreen({
     super.key,
     required this.inventoryService,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../widgets/dashboard_card.dart';
 
+// Dashboard screen for the STOCKORRA app
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -10,7 +11,7 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 0; // Tracks the selected index for BottomNavigationBar
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +19,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         title: Row(
           children: [
+            // App logo
             Image.asset(
               'assets/images/stockorra_logo.png',
               height: 30,
@@ -32,12 +34,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
         backgroundColor: AppColors.primary,
         elevation: 0,
       ),
-      drawer: _buildDrawer(),
-      body: _buildBody(),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      drawer: _buildDrawer(), // Navigation drawer
+      body: _buildBody(), // Main body of the screen
+      bottomNavigationBar: _buildBottomNavigationBar(), // Bottom nav bar
     );
   }
 
+  // Main scrollable body content
   Widget _buildBody() {
     return SingleChildScrollView(
       child: Column(
@@ -52,6 +55,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // Header section with greeting and search bar
   Widget _buildHeader() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -82,6 +86,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
           const SizedBox(height: 20),
+          // Search and QR scanner box
           Container(
             padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
@@ -122,6 +127,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // Statistics summary section
   Widget _buildStatsSection() {
     return Padding(
       padding: const EdgeInsets.all(20),
@@ -185,6 +191,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // Widget to create a statistic card
   Widget _buildStatCard({
     required String title,
     required String value,
@@ -207,6 +214,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Title and icon
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -225,6 +233,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ],
           ),
           const SizedBox(height: 10),
+          // Value
           Text(
             value,
             style: const TextStyle(
@@ -238,6 +247,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // Feature grid section
   Widget _buildFeatureSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -253,6 +263,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
           const SizedBox(height: 15),
+          // Grid of Dashboard Cards
           GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -284,7 +295,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 iconData: Icons.lightbulb_outline,
                 color: Colors.amber,
                 onTap: () {
-                  // Navigate to Suggestions screen
+                  // Navigate to Suggestions screen.
                 },
               ),
               DashboardCard(
@@ -303,6 +314,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // Section for recent user activities
   Widget _buildRecentActivitySection() {
     return Padding(
       padding: const EdgeInsets.all(20),
@@ -318,6 +330,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
           const SizedBox(height: 15),
+          // Activity list
           _buildActivityItem(
             title: 'Milk added to inventory',
             time: '2 hours ago',
@@ -347,6 +360,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // Widget to show one activity item
   Widget _buildActivityItem({
     required String title,
     required String time,
@@ -369,6 +383,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       child: Row(
         children: [
+          // Icon with background
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -382,6 +397,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
           const SizedBox(width: 15),
+          // Title and time
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -414,6 +430,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // Navigation drawer with options
   Widget _buildDrawer() {
     return Drawer(
       child: ListView(
@@ -426,6 +443,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Logos
                 Row(
                   children: [
                     Image.asset(
@@ -458,6 +476,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
           ),
+          // Drawer menu items
           _buildDrawerItem(
             title: 'Dashboard',
             iconData: Icons.dashboard_outlined,
@@ -470,7 +489,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             title: 'Inventory',
             iconData: Icons.inventory_2_outlined,
             onTap: () {
-              // Navigate to Inventory
               Navigator.pop(context);
             },
           ),
@@ -478,7 +496,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             title: 'Shopping List',
             iconData: Icons.shopping_cart_outlined,
             onTap: () {
-              // Navigate to Shopping List
               Navigator.pop(context);
             },
           ),
@@ -486,7 +503,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             title: 'Suggestions',
             iconData: Icons.lightbulb_outline,
             onTap: () {
-              // Navigate to Suggestions
               Navigator.pop(context);
             },
           ),
@@ -495,7 +511,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             title: 'Settings',
             iconData: Icons.settings_outlined,
             onTap: () {
-              // Navigate to Settings
               Navigator.pop(context);
             },
           ),
@@ -503,7 +518,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             title: 'Help & Support',
             iconData: Icons.help_outline,
             onTap: () {
-              // Navigate to Help
               Navigator.pop(context);
             },
           ),
@@ -511,7 +525,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             title: 'Logout',
             iconData: Icons.logout,
             onTap: () {
-              // Logout logic
               Navigator.pop(context);
             },
           ),
@@ -520,6 +533,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // Widget for each item in the drawer
   Widget _buildDrawerItem({
     required String title,
     required IconData iconData,
@@ -544,6 +558,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // Bottom navigation bar to switch between main sections
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
       currentIndex: _selectedIndex,

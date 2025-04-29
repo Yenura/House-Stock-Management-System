@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => _isLoading = true);
 
       try {
-        // TODO: Implement actual login logic with Firebase
+        // TODO: Implement actual login logic with Firebase.
         await Future.delayed(const Duration(seconds: 1)); // Simulated delay
         Navigator.pushReplacementNamed(context, Routes.dashboard);
       } catch (e) {

@@ -1,4 +1,4 @@
-// lib/screens/auth/signup_screen.dart
+// lib/screens/auth/signup_screen.dart.
 
 import 'package:flutter/material.dart';
 import 'package:stockorra/routes.dart';

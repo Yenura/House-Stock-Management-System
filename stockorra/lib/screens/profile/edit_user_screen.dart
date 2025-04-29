@@ -8,12 +8,13 @@ import 'package:stockorra/widgets/auth/auth_button.dart';
 import 'package:stockorra/widgets/auth/custom_text_field.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// EditUserScreen widget for editing user details
 class EditUserScreen extends StatefulWidget {
-  final User user;
+  final User user; // The user object to be edited
 
   const EditUserScreen({
     super.key,
-    required this.user,
+    required this.user, // Passing the user to the screen
   });
 
   @override
@@ -21,29 +22,31 @@ class EditUserScreen extends StatefulWidget {
 }
 
 class _EditUserScreenState extends State<EditUserScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _newPasswordController = TextEditingController();
-  final _countryController = TextEditingController();
-  DateTime? _selectedDate;
-  String? _photoUrl;
-  bool _isLoading = false;
+  final _formKey = GlobalKey<FormState>(); // Form key to validate form
+  final _nameController = TextEditingController(); // Controller for name input field
+  final _emailController = TextEditingController(); // Controller for email input field
+  final _newPasswordController = TextEditingController(); // Controller for new password input field
+  final _countryController = TextEditingController(); // Controller for country input field
+  DateTime? _selectedDate; // Selected date of birth
+  String? _photoUrl; // User's profile photo URL
+  bool _isLoading = false; // Loading state for the update operation
 
   @override
   void initState() {
     super.initState();
+    // Initializing controllers with existing user data
     _nameController.text = widget.user.name;
     _emailController.text = widget.user.email;
     _countryController.text = widget.user.country ?? '';
     _selectedDate = widget.user.dateOfBirth != null
-        ? DateTime.parse(widget.user.dateOfBirth!)
+        ? DateTime.parse(widget.user.dateOfBirth!) // Parse date of birth if exists
         : null;
-    _photoUrl = widget.user.photoUrl;
+    _photoUrl = widget.user.photoUrl; // Set the user's profile photo
   }
 
   @override
   void dispose() {
+    // Dispose controllers when the screen is removed from the widget tree
     _nameController.dispose();
     _emailController.dispose();
     _newPasswordController.dispose();
@@ -51,6 +54,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
     super.dispose();
   }
 
+  // Function to select the date of birth using a date picker
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -60,22 +64,23 @@ class _EditUserScreenState extends State<EditUserScreen> {
     );
     if (picked != null && mounted) {
       setState(() {
-        _selectedDate = picked;
+        _selectedDate = picked; // Set the selected date
       });
     }
   }
 
+  // Function to update the user details in Firestore
   Future<void> _updateUser() async {
     if (!_formKey.currentState!.validate()) {
-      return;
+      return; // Return if form is not valid
     }
 
     setState(() {
-      _isLoading = true;
+      _isLoading = true; // Show loading indicator
     });
 
     try {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final authProvider = Provider.of<AuthProvider>(context, listen: false); // Get auth provider
 
       // Build the map of updated fields
       final updatedData = {
@@ -91,10 +96,11 @@ class _EditUserScreenState extends State<EditUserScreen> {
         updatedData['password'] = _newPasswordController.text.trim();
       }
 
+      // Update user in Firestore
       await authProvider.updateUser(widget.user.id, updatedData);
 
       if (mounted) {
-        Navigator.pop(context);
+        Navigator.pop(context); // Pop screen after update
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('User updated successfully'),
@@ -104,9 +110,10 @@ class _EditUserScreenState extends State<EditUserScreen> {
       }
     } catch (e) {
       setState(() {
-        _isLoading = false;
+        _isLoading = false; // Hide loading indicator in case of error
       });
 
+      // Show error message if update fails
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error: ${e.toString()}'),
@@ -116,7 +123,9 @@ class _EditUserScreenState extends State<EditUserScreen> {
     }
   }
 
+  // Function to delete the user
   Future<void> _deleteUser() async {
+    // Show confirmation dialog before deleting
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -140,20 +149,20 @@ class _EditUserScreenState extends State<EditUserScreen> {
     );
 
     if (confirm != true) {
-      return;
+      return; // Do nothing if deletion is canceled
     }
 
     setState(() {
-      _isLoading = true;
+      _isLoading = true; // Show loading indicator during deletion
     });
 
     try {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final authProvider = Provider.of<AuthProvider>(context, listen: false); // Get auth provider
 
-      await authProvider.deleteUser(widget.user.id);
+      await authProvider.deleteUser(widget.user.id); // Delete user from Firestore
 
       if (mounted) {
-        Navigator.pop(context);
+        Navigator.pop(context); // Pop screen after deletion
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('User deleted successfully'),
@@ -163,9 +172,10 @@ class _EditUserScreenState extends State<EditUserScreen> {
       }
     } catch (e) {
       setState(() {
-        _isLoading = false;
+        _isLoading = false; // Hide loading indicator in case of error
       });
 
+      // Show error message if deletion fails
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error: ${e.toString()}'),
@@ -181,6 +191,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
       appBar: AppBar(
         title: const Text(AppStrings.editUser),
         actions: [
+          // Icon button for deleting the user
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: _deleteUser,
@@ -190,10 +201,11 @@ class _EditUserScreenState extends State<EditUserScreen> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
-          key: _formKey,
+          key: _formKey, // Attach the form key for validation
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Profile picture and camera icon to change photo
               Center(
                 child: Stack(
                   alignment: Alignment.bottomRight,
@@ -229,12 +241,14 @@ class _EditUserScreenState extends State<EditUserScreen> {
                 ),
               ),
               const SizedBox(height: 32),
+              // Name input field
               CustomTextField(
                 label: AppStrings.name,
                 controller: _nameController,
                 validator: Validators.validateRequired,
               ),
               const SizedBox(height: 16),
+              // Email input field
               CustomTextField(
                 label: AppStrings.email,
                 controller: _emailController,
@@ -242,6 +256,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
                 validator: Validators.validateEmail,
               ),
               const SizedBox(height: 16),
+              // New password input field (optional)
               CustomTextField(
                 label: 'New ${AppStrings.password} (optional)',
                 controller: _newPasswordController,
@@ -254,12 +269,14 @@ class _EditUserScreenState extends State<EditUserScreen> {
                 },
               ),
               const SizedBox(height: 16),
+              // Country input field
               CustomTextField(
                 label: 'Country',
                 controller: _countryController,
                 validator: Validators.validateRequired,
               ),
               const SizedBox(height: 16),
+              // Date picker for selecting date of birth
               InkWell(
                 onTap: () => _selectDate(context),
                 child: InputDecorator(
@@ -281,6 +298,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
                 ),
               ),
               const SizedBox(height: 32),
+              // Button to update the user
               AuthButton(
                 text: 'Update User',
                 onPressed: _updateUser,
@@ -293,3 +311,4 @@ class _EditUserScreenState extends State<EditUserScreen> {
     );
   }
 }
+//.
