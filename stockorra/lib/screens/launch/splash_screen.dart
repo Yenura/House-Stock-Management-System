@@ -100,7 +100,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
-// Stateless widget to represent individual splash page content
+// Stateless widget to represent individual splash page content.
 class SplashContent extends StatelessWidget {
   final String title; // Page title
   final String subtitle; // Page subtitle
