@@ -4,6 +4,7 @@ import '../../providers/auth_provider.dart';
 import '../../widgets/auth/auth_button.dart';
 import '../../widgets/auth/custom_text_field.dart';
 
+// Forgot Password screen widget
 class ForgotPasswordScreen extends StatefulWidget {
   static const routeName = '/forgot-password';
 
@@ -14,23 +15,26 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  bool _emailSent = false;
+  final _formKey = GlobalKey<FormState>(); // Key to validate the form
+  final _emailController = TextEditingController(); // Controller to handle email input
+  bool _emailSent = false; // Flag to track if email has been sent
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _emailController.dispose(); // Dispose controller to free resources
     super.dispose();
   }
 
+  // Method to handle form submission
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) return; // Validate form fields
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    // Trigger password reset using email
     final success = await authProvider.resetPassword(_emailController.text.trim());
 
     if (success && mounted) {
+      // Update UI if reset was successful
       setState(() {
         _emailSent = true;
       });
@@ -39,29 +43,32 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-    final theme = Theme.of(context);
+    final authProvider = Provider.of<AuthProvider>(context); // Access AuthProvider
+    final theme = Theme.of(context); // Get current theme
 
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Form(
-            key: _formKey,
+            key: _formKey, // Attach form key
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 24),
+                // Back button
                 IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 const SizedBox(height: 16),
+                // Title text
                 Text(
                   'Forgot Password',
                   style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
+                // Conditional message based on email sent status
                 Text(
                   _emailSent
                       ? 'Password reset link has been sent to your email.'
@@ -70,12 +77,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
                 const SizedBox(height: 24),
                 if (!_emailSent) ...[
+                  // Email input field
                   CustomTextField(
                     controller: _emailController,
                     label: 'Email Address',
                     hintText: 'Enter Email Address',
                     keyboardType: TextInputType.emailAddress,
-                    prefix: const Icon(Icons.email_outlined), // ✅ Fixed prefix usage
+                    prefix: const Icon(Icons.email_outlined), // Email icon
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your email';
@@ -87,6 +95,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     },
                   ),
                   const SizedBox(height: 24),
+                  // Error message display if any
                   if (authProvider.error != null)
                     Container(
                       padding: const EdgeInsets.all(8),
@@ -108,6 +117,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ],
                       ),
                     ),
+                  // Submit button
                   AuthButton(
                     text: 'Send',
                     onPressed: _submit,
@@ -115,18 +125,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                 ],
                 if (_emailSent) ...[
+                  // Success icon
                   const Icon(
                     Icons.check_circle_outline,
                     color: Colors.green,
                     size: 64,
                   ),
                   const SizedBox(height: 24),
+                  // Button to return to login screen
                   AuthButton(
                     text: 'Return to Login',
                     onPressed: () => Navigator.of(context).pop(),
                     isLoading: false,
                   ),
                   const SizedBox(height: 16),
+                  // Option to try another email
                   Center(
                     child: TextButton(
                       onPressed: () {
